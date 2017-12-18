@@ -1,5 +1,3 @@
-using System;
-
 namespace BulletinBoard.Models
 {
     public class ErrorViewModel
