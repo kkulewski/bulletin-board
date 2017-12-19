@@ -11,6 +11,7 @@ namespace BulletinBoard.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public virtual DbSet<JobCategory> JobCategories { get; set; }
+        public virtual DbSet<JobType> JobTypes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
