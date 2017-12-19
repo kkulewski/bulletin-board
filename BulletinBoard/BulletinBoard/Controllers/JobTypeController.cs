@@ -35,14 +35,19 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var jobType = await _context.JobTypes
-                .SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
                 return NotFound();
             }
 
-            return View(jobType);
+            var viewModel = new DetailsJobTypeViewModel
+            {
+                JobTypeId = jobType.JobTypeId,
+                Name = jobType.Name
+            };
+
+            return View(viewModel);
         }
 
         // GET: JobType/Create
