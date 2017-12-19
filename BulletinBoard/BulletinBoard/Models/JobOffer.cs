@@ -1,4 +1,6 @@
-﻿namespace BulletinBoard.Models
+﻿using System;
+
+namespace BulletinBoard.Models
 {
     public class JobOffer
     {
@@ -10,10 +12,16 @@
 
         public JobType JobType { get; set; }
 
+        public DateTime Submitted { get; set; }
+
+        public DateTime LastEdit { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
 
         public decimal Wage { get; set; }
+
+        public bool Active { get; set; }
     }
 }
