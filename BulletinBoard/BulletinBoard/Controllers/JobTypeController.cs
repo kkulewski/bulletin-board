@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
@@ -14,10 +15,12 @@ namespace BulletinBoard.Controllers
     public class JobTypeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public JobTypeController(ApplicationDbContext context)
+        public JobTypeController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: JobType
@@ -41,12 +44,7 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var viewModel = new DetailsJobTypeViewModel
-            {
-                JobTypeId = jobType.JobTypeId,
-                Name = jobType.Name
-            };
-
+            var viewModel = _mapper.Map<DetailsJobTypeViewModel>(jobType);
             return View(viewModel);
         }
 
@@ -86,12 +84,7 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var viewModel = new EditJobTypeViewModel
-            {
-                JobTypeId = jobType.JobTypeId,
-                Name = jobType.Name
-            };
-
+            var viewModel = _mapper.Map<EditJobTypeViewModel>(jobType);
             return View(viewModel);
         }
 
@@ -140,12 +133,7 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var viewModel = new DeleteJobTypeViewModel
-            {
-                JobTypeId = jobType.JobTypeId,
-                Name = jobType.Name
-            };
-
+            var viewModel = _mapper.Map<DeleteJobTypeViewModel>(jobType);
             return View(viewModel);
         }
 
