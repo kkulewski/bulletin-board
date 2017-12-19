@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BulletinBoard.Models;
 using BulletinBoard.Models.AccountViewModels;
+using System.Collections.Generic;
+using BulletinBoard.Helpers;
 
 namespace BulletinBoard.Controllers
 {
@@ -99,6 +101,7 @@ namespace BulletinBoard.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    await _userManager.AddToRoleAsync(user, RoleHelper.User);
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
