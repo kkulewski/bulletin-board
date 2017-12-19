@@ -140,15 +140,26 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            return View(jobType);
+            var viewModel = new DeleteJobTypeViewModel
+            {
+                JobTypeId = jobType.JobTypeId,
+                Name = jobType.Name
+            };
+
+            return View(viewModel);
         }
 
         // POST: JobType/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string jobTypeId)
+        public async Task<IActionResult> Delete(DeleteJobTypeViewModel model)
         {
-            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == jobTypeId);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
             _context.JobTypes.Remove(jobType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
