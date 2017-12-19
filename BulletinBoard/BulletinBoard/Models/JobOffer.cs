@@ -2,7 +2,7 @@
 {
     public class JobOffer
     {
-        public string Id { get; set; }
+        public string JobOfferId { get; set; }
 
         public ApplicationUser Author { get; set; }
 

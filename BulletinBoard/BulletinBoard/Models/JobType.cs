@@ -4,7 +4,7 @@ namespace BulletinBoard.Models
 {
     public class JobType
     {
-        public string Id { get; set; }
+        public string JobTypeId { get; set; }
 
         public string Name { get; set; }
 

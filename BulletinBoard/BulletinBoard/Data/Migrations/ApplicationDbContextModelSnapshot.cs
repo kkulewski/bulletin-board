@@ -73,19 +73,19 @@ namespace BulletinBoard.Data.Migrations
 
             modelBuilder.Entity("BulletinBoard.Models.JobCategory", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("JobCategoryId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("JobCategoryId");
 
                     b.ToTable("JobCategories");
                 });
 
             modelBuilder.Entity("BulletinBoard.Models.JobOffer", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("JobOfferId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AuthorId");
@@ -100,7 +100,7 @@ namespace BulletinBoard.Data.Migrations
 
                     b.Property<decimal>("Wage");
 
-                    b.HasKey("Id");
+                    b.HasKey("JobOfferId");
 
                     b.HasIndex("AuthorId");
 
@@ -113,12 +113,12 @@ namespace BulletinBoard.Data.Migrations
 
             modelBuilder.Entity("BulletinBoard.Models.JobType", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("JobTypeId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("JobTypeId");
 
                     b.ToTable("JobTypes");
                 });
