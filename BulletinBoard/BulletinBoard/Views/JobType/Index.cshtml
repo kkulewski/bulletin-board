@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BulletinBoard.Models.JobType>
+﻿@model IEnumerable<BulletinBoard.Models.JobTypeViewModels.JobTypeViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -11,15 +11,16 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -30,6 +31,6 @@
                 <a asp-action="Delete" asp-route-id="@item.JobTypeId">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

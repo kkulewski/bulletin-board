@@ -26,7 +26,8 @@ namespace BulletinBoard.Controllers
         // GET: JobType
         public async Task<IActionResult> Index()
         {
-            var jobTypes = await _context.JobTypes.ToListAsync();
+            var jobTypes = await _context.JobTypes
+                .Select(m => _mapper.Map<JobTypeViewModel>(m)).ToListAsync();
             return View(jobTypes);
         }
 

@@ -7,6 +7,7 @@ namespace BulletinBoard.Models.Mappings
     {
         public ModelToViewModelMappingProfile()
         {
+            CreateMap<JobTypeViewModel, JobType>();
             CreateMap<CreateJobTypeViewModel, JobType>();
             CreateMap<DeleteJobTypeViewModel, JobType>();
             CreateMap<DetailsJobTypeViewModel, JobType>();
