@@ -1,17 +1,15 @@
-﻿@model BulletinBoard.Models.JobType
+﻿@model BulletinBoard.Models.JobTypeViewModels.EditJobTypeViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit</h2>
-
-<h4>JobType</h4>
+<h2>Edit job type</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <input type="hidden" asp-for="JobTypeId" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

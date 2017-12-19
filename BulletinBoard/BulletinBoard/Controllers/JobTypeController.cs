@@ -80,40 +80,44 @@ namespace BulletinBoard.Controllers
             {
                 return NotFound();
             }
-            return View(jobType);
+
+            var viewModel = new EditJobTypeViewModel
+            {
+                JobTypeId = jobType.JobTypeId,
+                Name = jobType.Name
+            };
+
+            return View(viewModel);
         }
 
         // POST: JobType/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("JobTypeId,Name")] JobType jobType)
+        public async Task<IActionResult> Edit(EditJobTypeViewModel model)
         {
-            if (id != jobType.JobTypeId)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(jobType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!JobTypeExists(jobType.JobTypeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
+                jobType.Name = model.Name;
+                _context.Update(jobType);
+                await _context.SaveChangesAsync();
             }
-            return View(jobType);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!JobTypeExists(model.JobTypeId))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: JobType/Delete/5
