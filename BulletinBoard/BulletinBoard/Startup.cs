@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,7 @@ namespace BulletinBoard
                 .AddDefaultTokenProviders();
 
             services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddAutoMapper();
             services.AddMvc();
         }
 
