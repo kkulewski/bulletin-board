@@ -1,8 +1,8 @@
 ﻿namespace BulletinBoard.Models
 {
-    public class Category
+    public class JobCategory
     {
-        public string CategoryId { get; set; }
+        public string JobCategoryId { get; set; }
 
         public string Name { get; set; }
     }
