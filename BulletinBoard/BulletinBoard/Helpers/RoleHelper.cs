@@ -1,6 +1,6 @@
 ﻿namespace BulletinBoard.Helpers
 {
-    public static class Roles
+    public static class RoleHelper
     {
         public const string Administrator = "Administrator";
         public const string Moderator = "Moderator";
