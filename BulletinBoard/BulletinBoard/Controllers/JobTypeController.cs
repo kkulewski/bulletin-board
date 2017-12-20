@@ -4,10 +4,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
-using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobTypeViewModels;
-using Microsoft.AspNetCore.Identity;
 
 namespace BulletinBoard.Controllers
 {
