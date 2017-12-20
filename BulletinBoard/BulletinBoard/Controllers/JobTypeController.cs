@@ -37,7 +37,8 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _context.JobTypes
+                .SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
                 return NotFound();
@@ -77,7 +78,8 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _context.JobTypes
+                .SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
                 return NotFound();
@@ -99,7 +101,8 @@ namespace BulletinBoard.Controllers
 
             try
             {
-                var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
+                var jobType = await _context.JobTypes
+                    .SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
                 jobType.Name = model.Name;
                 _context.Update(jobType);
                 await _context.SaveChangesAsync();
@@ -146,7 +149,8 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobType = await _context.JobTypes.SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
+            var jobType = await _context.JobTypes
+                .SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
             _context.JobTypes.Remove(jobType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
