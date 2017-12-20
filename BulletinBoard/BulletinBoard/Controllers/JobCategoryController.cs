@@ -64,7 +64,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobCategory = new JobType {Name = model.Name};
+            var jobCategory = new JobCategory {Name = model.Name};
             _context.Add(jobCategory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
