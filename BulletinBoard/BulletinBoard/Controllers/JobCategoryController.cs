@@ -4,11 +4,14 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
+using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BulletinBoard.Controllers
 {
+    [Authorize(Roles = RoleHelper.Administrator)]
     [Route("[controller]/[action]")]
     public class JobCategoryController : Controller
     {
