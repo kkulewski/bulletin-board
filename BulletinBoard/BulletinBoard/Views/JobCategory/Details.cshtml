@@ -1,24 +1,20 @@
 ﻿@model BulletinBoard.Models.JobCategoryViewModels.DetailsJobCategoryViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Details - Job Category";
 }
 
-<h2>Details</h2>
-
+<h3>Job category details</h3>
+<hr />
 <div>
-    <h4>Job category</h4>
-    <hr/>
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            <label asp-for="@Model.Name"></label>
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            <p asp-display-for="@Model.Name"></p>
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.JobCategoryId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.JobCategoryId" class="btn btn-primary btn-sm">Edit</a>
+    <a asp-action="Index" class="btn btn-default btn-sm">Back to list</a>
 </div>
