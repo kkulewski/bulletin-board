@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<BulletinBoard.Models.JobTypeViewModels.JobTypeViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Job Type";
 }
 
-<h2>Index</h2>
-
+<h3>Job type</h3>
+<hr/>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
 </p>
 <table class="table">
     <thead>
@@ -23,12 +23,12 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <p asp-display-for="@item.Name"></p>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.JobTypeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.JobTypeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.JobTypeId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.JobTypeId" class="btn btn-primary btn-sm">Edit</a>
+                <a asp-action="Details" asp-route-id="@item.JobTypeId" class="btn btn-info btn-sm">Details</a>
+                <a asp-action="Delete" asp-route-id="@item.JobTypeId" class="btn btn-danger btn-sm">Delete</a>
             </td>
         </tr>
     }
