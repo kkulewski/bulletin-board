@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BulletinBoard.Data;
 using BulletinBoard.Models;
+using Microsoft.AspNetCore.Localization;
 
 namespace BulletinBoard
 {
@@ -39,6 +40,11 @@ namespace BulletinBoard
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("en-US");
+            });
+
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
             services.AddMvc();
@@ -61,6 +67,8 @@ namespace BulletinBoard
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseRequestLocalization();
 
             app.UseMvc(routes =>
             {
