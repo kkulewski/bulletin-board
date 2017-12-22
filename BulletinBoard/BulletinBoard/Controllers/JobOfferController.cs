@@ -41,10 +41,7 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
-                var isModerator = await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
-                var isAdministrator = await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
-
-                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || isAdministrator || isModerator);
+                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
             }
 
             return View(jobOffers);
@@ -72,10 +69,7 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
-                var isModerator = await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
-                var isAdministrator = await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
-
-                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || isAdministrator || isModerator;
+                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator();
             }
 
             return View(viewModel);
@@ -141,7 +135,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            if (jobOffer.Author.Id != (await GetCurrentUser()).Id)
+            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !UserIsModerator() && !UserIsAdministrator())
             {
                 return View("AccessDenied");
             }
@@ -249,6 +243,18 @@ namespace BulletinBoard.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);
+        }
+
+        private bool UserIsModerator()
+        {
+            var user = GetCurrentUser().Result;
+            return _userManager.IsInRoleAsync(user, RoleHelper.Moderator).Result;
+        }
+
+        private bool UserIsAdministrator()
+        {
+            var user = GetCurrentUser().Result;
+            return _userManager.IsInRoleAsync(user, RoleHelper.Administrator).Result;
         }
     }
 }
