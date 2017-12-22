@@ -100,6 +100,8 @@ namespace BulletinBoard.Controllers
         {
             if (!ModelState.IsValid)
             {
+                model.JobCategories = _context.JobCategories;
+                model.JobTypes = _context.JobTypes;
                 return View(model);
             }
 
@@ -151,6 +153,8 @@ namespace BulletinBoard.Controllers
         {
             if (!ModelState.IsValid)
             {
+                model.JobCategories = _context.JobCategories;
+                model.JobTypes = _context.JobTypes;
                 return View(model);
             }
 
