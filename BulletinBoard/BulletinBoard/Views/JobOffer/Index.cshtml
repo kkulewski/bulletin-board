@@ -1,0 +1,60 @@
+﻿@model IEnumerable<BulletinBoard.Models.JobOfferViewModels.JobOfferViewModel>
+
+@{
+    ViewData["Title"] = "Job offer";
+}
+
+<h3>@ViewData["Title"]</h3>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Wage
+        </th>
+        <th>
+            Submitted
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <p asp-display-for="@item.Title"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.JobCategory.Name"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.JobType.Name"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.Wage"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.Submitted"></p>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.JobOfferId" class="btn btn-primary btn-sm">Edit</a>
+                <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
+                <a asp-action="Delete" asp-route-id="@item.JobOfferId" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

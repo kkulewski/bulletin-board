@@ -1,0 +1,50 @@
+﻿@model BulletinBoard.Models.JobOfferViewModels.DetailsJobOfferViewModel
+
+@{
+    ViewData["Title"] = "Details - Job Offer";
+}
+
+<h3>@ViewData["Title"]</h3>
+<hr/>
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Submitted)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Submitted)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastEdit)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastEdit)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Wage)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Wage)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+    </dl>
+    <a asp-action="Edit" asp-route-id="@Model.JobOfferId" class="btn btn-primary btn-sm">Edit</a>
+    <a asp-action="Index" class="btn btn-default btn-sm">Back to list</a>
+</div>

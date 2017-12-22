@@ -1,0 +1,30 @@
+﻿@model BulletinBoard.Models.JobOfferViewModels.DeleteJobOfferViewModel
+
+@{
+    ViewData["Title"] = "Delete - Job Offer";
+}
+
+<h3>@ViewData["Title"]</h3>
+<hr/>
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="@Model.JobOfferId"/>
+        <input type="submit" value="Delete" class="btn btn-danger btn-sm"/>
+        <a asp-action="Index" class="btn btn-default btn-sm">Back to list</a>
+    </form>
+</div>
