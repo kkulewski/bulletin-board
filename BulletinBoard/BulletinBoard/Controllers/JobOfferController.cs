@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobOfferViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace BulletinBoard.Controllers
 {
@@ -14,17 +15,22 @@ namespace BulletinBoard.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public JobOfferController(ApplicationDbContext context, IMapper mapper)
+        public JobOfferController(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: JobOffer
         public async Task<IActionResult> Index()
         {
             var jobOffers = await _context.JobOffers
+                .Include(u => u.JobCategory)
+                .Include(u => u.JobType)
+                .Include(u => u.Author)
                 .Where(t => t.Active)
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
@@ -42,6 +48,7 @@ namespace BulletinBoard.Controllers
 
             var jobOffer = await _context.JobOffers
                 .SingleOrDefaultAsync(m => m.JobOfferId == id);
+
             if (jobOffer == null)
             {
                 return NotFound();
@@ -54,7 +61,13 @@ namespace BulletinBoard.Controllers
         // GET: JobOffer/Create
         public IActionResult Create()
         {
-            return View();
+            var viewModel = new CreateJobOfferViewModel
+            {
+                JobCategories = _context.JobCategories,
+                JobTypes = _context.JobTypes
+            };
+
+            return View(viewModel);
         }
 
         // POST: JobOffer/Create
@@ -69,13 +82,16 @@ namespace BulletinBoard.Controllers
 
             var jobOffer = new JobOffer
             {
-                //TODO: Author = USER,
+                Author = await _userManager.GetUserAsync(HttpContext.User),
+                JobCategory = await _context.JobCategories.SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId),
+                JobType = await _context.JobTypes.SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId),
                 Title = model.Title,
                 Description = model.Description,
                 Submitted = DateTime.Now,
                 LastEdit = DateTime.Now,
                 Wage = model.Wage,
-                Active = true,
+                Active = true
+
             };
 
             _context.Add(jobOffer);
@@ -92,13 +108,18 @@ namespace BulletinBoard.Controllers
             }
 
             var jobOffer = await _context.JobOffers
+                .Include(c => c.JobCategory)
+                .Include(c => c.JobType)
                 .SingleOrDefaultAsync(m => m.JobOfferId == id);
+
             if (jobOffer == null)
             {
                 return NotFound();
             }
 
             var viewModel = _mapper.Map<EditJobOfferViewModel>(jobOffer);
+            viewModel.JobCategories = _context.JobCategories;
+            viewModel.JobTypes = _context.JobTypes;
             return View(viewModel);
         }
 
@@ -117,6 +138,10 @@ namespace BulletinBoard.Controllers
                 var jobOffer = await _context.JobOffers
                     .SingleOrDefaultAsync(m => m.JobOfferId == model.JobOfferId);
 
+                jobOffer.JobCategory = await _context.JobCategories
+                    .SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId);
+                jobOffer.JobType = await _context.JobTypes
+                    .SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId);
                 jobOffer.Title = model.Title;
                 jobOffer.Description = model.Description;
                 jobOffer.Wage = model.Wage;
