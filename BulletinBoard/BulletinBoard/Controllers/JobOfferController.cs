@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
+using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobOfferViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -37,11 +38,13 @@ namespace BulletinBoard.Controllers
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
-
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
-                jobOffers.ForEach(m => m.CanEdit = m.Author.Id == user.Id);
+                var isModerator = await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
+                var isAdministrator = await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
+
+                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || isAdministrator || isModerator);
             }
 
             return View(jobOffers);
@@ -69,7 +72,10 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
-                viewModel.CanEdit = viewModel.Author.Id == user.Id;
+                var isModerator = await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
+                var isAdministrator = await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
+
+                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || isAdministrator || isModerator;
             }
 
             return View(viewModel);
