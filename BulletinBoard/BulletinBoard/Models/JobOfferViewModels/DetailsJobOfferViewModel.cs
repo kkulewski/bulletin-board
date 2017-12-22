@@ -15,6 +15,8 @@ namespace BulletinBoard.Models.JobOfferViewModels
         public DateTime Submitted { get; set; }
 
         public DateTime LastEdit { get; set; }
+        
+        public string PostalCode { get; set; }
 
         public string Title { get; set; }
 

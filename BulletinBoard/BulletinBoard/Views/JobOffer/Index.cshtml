@@ -17,19 +17,25 @@
     <thead>
     <tr>
         <th>
-            Title
+            @Html.DisplayNameFor(model => model.Author)
         </th>
         <th>
-            Category
+            @Html.DisplayNameFor(model => model.PostalCode)
         </th>
         <th>
-            Type
+            @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            Wage
+            @Html.DisplayNameFor(model => model.JobCategory)
         </th>
         <th>
-            Submitted
+            @Html.DisplayNameFor(model => model.JobType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Wage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Submitted)
         </th>
         <th></th>
     </tr>
@@ -38,6 +44,12 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                <p asp-display-for="@item.Author.Email"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.PostalCode"></p>
+            </td>
             <td>
                 <p asp-display-for="@item.Title"></p>
             </td>

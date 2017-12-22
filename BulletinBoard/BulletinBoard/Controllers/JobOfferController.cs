@@ -110,6 +110,7 @@ namespace BulletinBoard.Controllers
                 Author = await GetCurrentUser(),
                 JobCategory = await _context.JobCategories.SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId),
                 JobType = await _context.JobTypes.SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId),
+                PostalCode = model.PostalCode,
                 Title = model.Title,
                 Description = model.Description,
                 Submitted = DateTime.Now,
@@ -172,6 +173,7 @@ namespace BulletinBoard.Controllers
                     .SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId);
                 jobOffer.JobType = await _context.JobTypes
                     .SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId);
+                jobOffer.PostalCode = model.PostalCode;
                 jobOffer.Title = model.Title;
                 jobOffer.Description = model.Description;
                 jobOffer.Wage = model.Wage;

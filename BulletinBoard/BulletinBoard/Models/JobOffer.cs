@@ -16,6 +16,8 @@ namespace BulletinBoard.Models
 
         public DateTime LastEdit { get; set; }
 
+        public string PostalCode { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
