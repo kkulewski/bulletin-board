@@ -27,11 +27,7 @@ namespace BulletinBoard.Controllers
         // GET: JobOffer
         public async Task<IActionResult> Index()
         {
-            var jobOffers = await _context.JobOffers
-                .Include(u => u.JobCategory)
-                .Include(u => u.JobType)
-                .Include(u => u.Author)
-                .Where(t => t.Active)
+            var jobOffers = await GetJobOffersGreedy()
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
@@ -46,7 +42,7 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var jobOffer = await _context.JobOffers
+            var jobOffer = await GetJobOffersGreedy()
                 .SingleOrDefaultAsync(m => m.JobOfferId == id);
 
             if (jobOffer == null)
@@ -107,9 +103,7 @@ namespace BulletinBoard.Controllers
                 return NotFound();
             }
 
-            var jobOffer = await _context.JobOffers
-                .Include(c => c.JobCategory)
-                .Include(c => c.JobType)
+            var jobOffer = await GetJobOffersGreedy()
                 .SingleOrDefaultAsync(m => m.JobOfferId == id);
 
             if (jobOffer == null)
@@ -203,6 +197,15 @@ namespace BulletinBoard.Controllers
         private bool JobOfferExists(string id)
         {
             return _context.JobOffers.Any(e => e.JobOfferId == id);
+        }
+
+        private IQueryable<JobOffer> GetJobOffersGreedy()
+        {
+            return _context.JobOffers
+                .Include(u => u.JobCategory)
+                .Include(u => u.JobType)
+                .Include(u => u.Author)
+                .Where(t => t.Active);
         }
     }
 }
