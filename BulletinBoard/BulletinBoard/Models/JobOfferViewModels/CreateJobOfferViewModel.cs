@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BulletinBoard.Models.JobOfferViewModels
 {
@@ -8,11 +9,11 @@ namespace BulletinBoard.Models.JobOfferViewModels
 
         [Required]
         [Display(Name = "Category")]
-        public JobCategory JobCategory { get; set; }
+        public string JobCategoryId { get; set; }
 
         [Required]
         [Display(Name = "Type")]
-        public JobType JobType { get; set; }
+        public string JobTypeId { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
@@ -20,7 +21,7 @@ namespace BulletinBoard.Models.JobOfferViewModels
         public string Title { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 50)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 10)]
         [Display(Name = "Description")]
         public string Description { get; set; }
 
@@ -28,5 +29,9 @@ namespace BulletinBoard.Models.JobOfferViewModels
         [DataType(DataType.Currency)]
         [Display(Name = "Wage")]
         public decimal Wage { get; set; }
+
+        public IEnumerable<JobCategory> JobCategories { get; set; }
+
+        public IEnumerable<JobType> JobTypes { get; set; }
     }
 }
