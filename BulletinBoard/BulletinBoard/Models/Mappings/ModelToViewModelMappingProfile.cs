@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BulletinBoard.Models.JobCategoryViewModels;
+using BulletinBoard.Models.JobOfferViewModels;
 using BulletinBoard.Models.JobTypeViewModels;
 
 namespace BulletinBoard.Models.Mappings
@@ -19,6 +20,12 @@ namespace BulletinBoard.Models.Mappings
             CreateMap<DeleteJobCategoryViewModel, JobCategory>();
             CreateMap<DetailsJobCategoryViewModel, JobCategory>();
             CreateMap<EditJobCategoryViewModel, JobCategory>();
+
+            CreateMap<JobOfferViewModel, JobCategory>();
+            CreateMap<CreateJobOfferViewModel, JobCategory>();
+            CreateMap<DeleteJobOfferViewModel, JobCategory>();
+            CreateMap<DetailsJobOfferViewModel, JobCategory>();
+            CreateMap<EditJobOfferViewModel, JobCategory>();
         }
     }
 }
