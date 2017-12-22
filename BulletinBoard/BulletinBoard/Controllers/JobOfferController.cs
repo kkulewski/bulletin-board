@@ -7,34 +7,48 @@ using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobOfferViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace BulletinBoard.Controllers
 {
+    [Authorize]
     public class JobOfferController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public JobOfferController(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public JobOfferController(ApplicationDbContext context, IMapper mapper,
+            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: JobOffer
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var jobOffers = await GetJobOffersGreedy()
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
+
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                var user = await GetCurrentUser();
+                jobOffers.ForEach(m => m.CanEdit = m.Author.Id == user.Id);
+            }
+
             return View(jobOffers);
         }
 
         // GET: JobOffer/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -51,6 +65,13 @@ namespace BulletinBoard.Controllers
             }
 
             var viewModel = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
+
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                var user = await GetCurrentUser();
+                viewModel.CanEdit = viewModel.Author.Id == user.Id;
+            }
+
             return View(viewModel);
         }
 
@@ -78,7 +99,7 @@ namespace BulletinBoard.Controllers
 
             var jobOffer = new JobOffer
             {
-                Author = await _userManager.GetUserAsync(HttpContext.User),
+                Author = await GetCurrentUser(),
                 JobCategory = await _context.JobCategories.SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId),
                 JobType = await _context.JobTypes.SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId),
                 Title = model.Title,
@@ -206,6 +227,11 @@ namespace BulletinBoard.Controllers
                 .Include(u => u.JobType)
                 .Include(u => u.Author)
                 .Where(t => t.Active);
+        }
+
+        private async Task<ApplicationUser> GetCurrentUser()
+        {
+            return await _userManager.GetUserAsync(User);
         }
     }
 }

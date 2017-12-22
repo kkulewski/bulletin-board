@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<BulletinBoard.Models.JobOfferViewModels.JobOfferViewModel>
+@inject SignInManager<ApplicationUser> SignInManager
 
 @{
     ViewData["Title"] = "Job offer";
@@ -7,7 +8,10 @@
 <h3>@ViewData["Title"]</h3>
 <hr />
 <p>
-    <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
+    }
 </p>
 <table class="table">
     <thead>
@@ -50,9 +54,16 @@
                 <p asp-display-for="@item.Submitted"></p>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.JobOfferId" class="btn btn-primary btn-sm">Edit</a>
-                <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
-                <a asp-action="Delete" asp-route-id="@item.JobOfferId" class="btn btn-danger btn-sm">Delete</a>
+                @if (@item.CanEdit)
+                {
+                    <a asp-action="Edit" asp-route-id="@item.JobOfferId" class="btn btn-primary btn-sm">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.JobOfferId" class="btn btn-danger btn-sm">Delete</a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
+                }
             </td>
         </tr>
     }

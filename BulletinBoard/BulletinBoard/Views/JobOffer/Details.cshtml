@@ -21,6 +21,24 @@
             @Html.DisplayFor(model => model.LastEdit)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Author.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Author.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.JobCategory.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.JobCategory.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.JobType.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.JobType.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Title)
         </dt>
         <dd>
@@ -45,6 +63,9 @@
             @Html.DisplayFor(model => model.Active)
         </dd>
     </dl>
+    @if (@Model.CanEdit)
+    {
     <a asp-action="Edit" asp-route-id="@Model.JobOfferId" class="btn btn-primary btn-sm">Edit</a>
+    }
     <a asp-action="Index" class="btn btn-default btn-sm">Back to list</a>
 </div>
