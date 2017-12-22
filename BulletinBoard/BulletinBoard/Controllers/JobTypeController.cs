@@ -37,14 +37,14 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobType = await _context.JobTypes
                 .SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var viewModel = _mapper.Map<DetailsJobTypeViewModel>(jobType);
@@ -78,14 +78,14 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobType = await _context.JobTypes
                 .SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var viewModel = _mapper.Map<EditJobTypeViewModel>(jobType);
@@ -114,7 +114,7 @@ namespace BulletinBoard.Controllers
             {
                 if (!JobTypeExists(model.JobTypeId))
                 {
-                    return NotFound();
+                    return View("NotFound");
                 }
 
                 throw;
@@ -128,14 +128,14 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobType = await _context.JobTypes
                 .SingleOrDefaultAsync(m => m.JobTypeId == id);
             if (jobType == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var viewModel = _mapper.Map<DeleteJobTypeViewModel>(jobType);

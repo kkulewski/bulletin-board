@@ -56,7 +56,7 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobOffer = await GetJobOffersGreedy()
@@ -64,7 +64,7 @@ namespace BulletinBoard.Controllers
 
             if (jobOffer == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var viewModel = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
@@ -129,7 +129,7 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobOffer = await GetJobOffersGreedy()
@@ -137,7 +137,12 @@ namespace BulletinBoard.Controllers
 
             if (jobOffer == null)
             {
-                return NotFound();
+                return View("NotFound");
+            }
+
+            if (jobOffer.Author.Id != (await GetCurrentUser()).Id)
+            {
+                return View("AccessDenied");
             }
 
             var viewModel = _mapper.Map<EditJobOfferViewModel>(jobOffer);
@@ -180,7 +185,7 @@ namespace BulletinBoard.Controllers
             {
                 if (!JobOfferExists(model.JobOfferId))
                 {
-                    return NotFound();
+                    return View("NotFound");
                 }
 
                 throw;
@@ -194,14 +199,14 @@ namespace BulletinBoard.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var jobOffer = await _context.JobOffers
                 .SingleOrDefaultAsync(m => m.JobOfferId == id);
             if (jobOffer == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var viewModel = _mapper.Map<DeleteJobOfferViewModel>(jobOffer);

@@ -127,7 +127,7 @@ namespace BulletinBoard.Controllers
         [HttpGet]
         public IActionResult AccessDenied()
         {
-            return View();
+            return View("AccessDenied");
         }
 
         #region Helpers
