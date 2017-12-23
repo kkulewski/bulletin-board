@@ -28,7 +28,7 @@
                 <form asp-action="ChangeRole">
                     <input type="hidden" asp-for="@item.ApplicationUserId" name="applicationUserId"/>
                     <select asp-for="@item.RoleId" name="roleId" onchange="this.form.submit()" class="form-control"
-                            asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))">
+                            asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))" disabled="@item.Disabled">
                     </select>
                 </form>
             </td>

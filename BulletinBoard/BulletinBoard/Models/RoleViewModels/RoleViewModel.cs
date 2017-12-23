@@ -12,5 +12,7 @@ namespace BulletinBoard.Models.RoleViewModels
         public string RoleId { get; set; }
 
         public IEnumerable<IdentityRole> Roles { get; set; }
+
+        public bool Disabled { get; set; }
     }
 }

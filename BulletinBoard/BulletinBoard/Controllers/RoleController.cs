@@ -40,7 +40,8 @@ namespace BulletinBoard.Controllers
                     ApplicationUser = user,
                     ApplicationUserId = user.Id,
                     RoleId = userRoleId,
-                    Roles = roles
+                    Roles = roles,
+                    Disabled = string.Equals(userRole, RoleHelper.Administrator)
                 };
                 return vm;
             });
