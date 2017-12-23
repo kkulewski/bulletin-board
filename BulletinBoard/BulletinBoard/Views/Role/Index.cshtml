@@ -20,22 +20,19 @@
     <tbody>
     @foreach (var item in Model)
     {
-            <tr>
-                <td>
-                    <p asp-display-for="@item.ApplicationUser.Email"></p>
-                </td>
-                <td>
-                    @using (Html.BeginForm("ChangeRole", "Role", FormMethod.Post))
-                    {
-                        <div class="form-inline">
-                            <select onchange="this.form.submit()" class="form-control" name="roleId" asp-for="@item.RoleId"
-                                    asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))">
-                            </select>
-                            <input type="hidden" name="applicationUserId" value="@item.ApplicationUserId" />
-                        </div>
-                    }
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <p asp-display-for="@item.ApplicationUser.Email"></p>
+            </td>
+            <td>
+                <form asp-action="ChangeRole">
+                    <input type="hidden" asp-for="@item.ApplicationUserId" name="applicationUserId"/>
+                    <select asp-for="@item.RoleId" name="roleId" onchange="this.form.submit()" class="form-control"
+                            asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))">
+                    </select>
+                </form>
+            </td>
+        </tr>
     }
     </tbody>
 </table>
