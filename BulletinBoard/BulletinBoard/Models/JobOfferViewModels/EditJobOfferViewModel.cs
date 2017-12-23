@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BulletinBoard.Helpers.CustomValidators;
 
 namespace BulletinBoard.Models.JobOfferViewModels
 {
@@ -16,6 +17,7 @@ namespace BulletinBoard.Models.JobOfferViewModels
         public string JobTypeId { get; set; }
 
         [Required]
+        [PostalCode]
         [Display(Name = "Postal code")]
         public string PostalCode { get; set; }
 

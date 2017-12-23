@@ -9,7 +9,7 @@ namespace BulletinBoard.Helpers.CustomValidators
         {
             if (value == null)
             {
-                return new ValidationResult(validationContext.DisplayName + "is required.");
+                return new ValidationResult(validationContext.DisplayName + " is required.");
             }
 
             var postalCode = value.ToString();
