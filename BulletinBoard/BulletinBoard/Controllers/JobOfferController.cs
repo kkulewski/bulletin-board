@@ -44,6 +44,7 @@ namespace BulletinBoard.Controllers
                 jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
             }
 
+            ViewData["JobOfferCount"] = jobOffers.Count;
             return View(jobOffers);
         }
 

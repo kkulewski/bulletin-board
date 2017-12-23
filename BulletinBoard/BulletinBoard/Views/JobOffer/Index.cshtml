@@ -5,7 +5,7 @@
     ViewData["Title"] = "Job offer";
 }
 
-<h3>@ViewData["Title"]</h3>
+<h3>@ViewData["Title"] (total: @ViewData["JobOfferCount"])</h3>
 <hr />
 <p>
     @if (SignInManager.IsSignedIn(User))
