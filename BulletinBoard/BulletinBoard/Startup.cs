@@ -45,13 +45,15 @@ namespace BulletinBoard
                 options.DefaultRequestCulture = new RequestCulture("en-US");
             });
 
+            services.AddScoped<ApplicationDbInitializer>();
+
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -69,6 +71,8 @@ namespace BulletinBoard
             app.UseAuthentication();
 
             app.UseRequestLocalization();
+
+            dbInitializer.Seed();
 
             app.UseMvc(routes =>
             {
