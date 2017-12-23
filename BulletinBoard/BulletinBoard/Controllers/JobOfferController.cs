@@ -51,6 +51,11 @@ namespace BulletinBoard.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Search(string phrase)
         {
+            if (string.IsNullOrEmpty(phrase))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             phrase = phrase.ToLower();
             var jobOffers = await GetJobOffersGreedy()
                 .Where(c => c.Title.Contains(phrase) 
@@ -59,7 +64,7 @@ namespace BulletinBoard.Controllers
                 || c.JobCategory.Name.ToLower().Contains(phrase) 
                 || c.Author.Email.ToLower().Contains(phrase))
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
-                .ToListAsync(); ;
+                .ToListAsync();
 
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
@@ -68,6 +73,7 @@ namespace BulletinBoard.Controllers
             }
 
             ViewData["JobOfferCount"] = jobOffers.Count;
+            ViewData["phrase"] = phrase;
             return View("Index", jobOffers);
         }
 
