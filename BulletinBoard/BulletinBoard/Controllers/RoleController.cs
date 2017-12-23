@@ -12,7 +12,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Controllers
 {
-    [Produces("application/json")]
+    [Authorize(Roles = RoleHelper.Administrator)]
+    [Route("[controller]/[action]")]
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,32 +25,51 @@ namespace BulletinBoard.Controllers
             _userManager = userManager;
         }
 
-        // GET: role
+        // GET: Role
         public async Task<IActionResult> Index()
         {
-
             var roles = await _context.Roles.ToListAsync();
             var users = await _context.ApplicationUsers.ToListAsync();
 
-            var viewModel = users.Select(c =>
+            var viewModel = users.Select(user =>
             {
-                var userRole = _userManager.GetRolesAsync(c).Result.FirstOrDefault();
-                var userRoleId = _context.Roles.FirstOrDefault(x => x.NormalizedName == userRole)?.Id;
-                var a = new RoleViewModel
+                var userRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
+                var userRoleId = _context.Roles.FirstOrDefault(role => role.NormalizedName == userRole).Id;
+                var vm = new RoleViewModel
                 {
-                    ApplicationUser = c,
+                    ApplicationUser = user,
+                    ApplicationUserId = user.Id,
                     RoleId = userRoleId,
                     Roles = roles
                 };
-                return a;
+                return vm;
             });
 
             return View(viewModel);
         }
 
+        // POST: Role/ChangeRole
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeRole(string applicationUserId, string roleId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            var user = _context.ApplicationUsers.First(c => c.Id == applicationUserId);
+            var newRole = _context.Roles.First(c => c.Id == roleId);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, userRoles);
+            await _userManager.AddToRoleAsync(user, newRole.Name);
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: role/
         [HttpGet]
-        public IEnumerable<string> Indexx()
+        public IEnumerable<string> Seed()
         {
             if (RolesEmpty())
             {
@@ -65,27 +85,6 @@ namespace BulletinBoard.Controllers
             }
 
             return _context.Roles.Select(c => c.Name);
-        }
-
-        [HttpGet]
-        [Authorize(Roles = RoleHelper.Administrator)]
-        public string AdministratorTest()
-        {
-            return "administrator";
-        }
-
-        [HttpGet]
-        [Authorize(Roles = RoleHelper.Moderator)]
-        public string ModeratorTest()
-        {
-            return "moderator";
-        }
-
-        [HttpGet]
-        [Authorize(Roles = RoleHelper.User)]
-        public string UserTest()
-        {
-            return "user";
         }
 
         private void AddRole(string roleName)

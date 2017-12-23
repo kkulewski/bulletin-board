@@ -15,26 +15,27 @@
         <th>
             @Html.DisplayNameFor(model => model.Roles)
         </th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                <p asp-display-for="@item.ApplicationUser.Email"></p>
-            </td>
-            <td>
-                <select class="form-control" asp-for="@item.RoleId"
-                        asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))"></select>
-            </td>
-            <td>
-                <a class="btn btn-primary btn-sm">Edit</a>
-                <a class="btn btn-info btn-sm">Details</a>
-                <a class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    <p asp-display-for="@item.ApplicationUser.Email"></p>
+                </td>
+                <td>
+                    @using (Html.BeginForm("ChangeRole", "Role", FormMethod.Post))
+                    {
+                        <div class="form-inline">
+                            <select onchange="this.form.submit()" class="form-control" name="roleId" asp-for="@item.RoleId"
+                                    asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))">
+                            </select>
+                            <input type="hidden" name="applicationUserId" value="@item.ApplicationUserId" />
+                        </div>
+                    }
+                </td>
+            </tr>
     }
     </tbody>
 </table>
