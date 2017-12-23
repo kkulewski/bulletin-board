@@ -66,36 +66,5 @@ namespace BulletinBoard.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        // GET: role/
-        [HttpGet]
-        public IEnumerable<string> Seed()
-        {
-            if (RolesEmpty())
-            {
-                var roles = new List<string>
-                {
-                    RoleHelper.Administrator,
-                    RoleHelper.Moderator,
-                    RoleHelper.User
-                };
-
-                roles.ForEach(AddRole);
-                _context.SaveChangesAsync();
-            }
-
-            return _context.Roles.Select(c => c.Name);
-        }
-
-        private void AddRole(string roleName)
-        {
-            var role = new IdentityRole(roleName) { NormalizedName = RoleHelper.Normalize(roleName) };
-            _context.Roles.Add(role);
-        }
-
-        private bool RolesEmpty()
-        {
-            return !_context.Roles.Any();
-        }
     }
 }
