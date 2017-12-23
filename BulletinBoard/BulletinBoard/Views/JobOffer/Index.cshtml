@@ -8,11 +8,16 @@
 <h3>@ViewData["Title"] (total: @ViewData["JobOfferCount"])</h3>
 <hr />
 <p>
+
+</p>
+<form asp-action="Search" method="get" class="form-inline">
     @if (SignInManager.IsSignedIn(User))
     {
         <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
     }
-</p>
+    <input name="phrase" class="form-control input-sm"/>
+    <input type="submit" value="Search" class="btn btn-default btn-sm"/>
+</form>
 <table class="table">
     <thead>
     <tr>

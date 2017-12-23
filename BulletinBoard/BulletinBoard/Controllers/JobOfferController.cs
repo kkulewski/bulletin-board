@@ -49,7 +49,6 @@ namespace BulletinBoard.Controllers
         }
 
         [AllowAnonymous]
-        [Route("[controller]/[action]/{phrase}")]
         public async Task<IActionResult> Search(string phrase)
         {
             phrase = phrase.ToLower();
