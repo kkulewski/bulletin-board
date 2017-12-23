@@ -48,6 +48,30 @@ namespace BulletinBoard.Controllers
             return View(jobOffers);
         }
 
+        [AllowAnonymous]
+        [Route("[controller]/[action]/{phrase}")]
+        public async Task<IActionResult> Search(string phrase)
+        {
+            phrase = phrase.ToLower();
+            var jobOffers = await GetJobOffersGreedy()
+                .Where(c => c.Title.Contains(phrase) 
+                || c.Description.ToLower().Contains(phrase) 
+                || c.JobType.Name.ToLower().Contains(phrase) 
+                || c.JobCategory.Name.ToLower().Contains(phrase) 
+                || c.Author.Email.ToLower().Contains(phrase))
+                .Select(m => _mapper.Map<JobOfferViewModel>(m))
+                .ToListAsync(); ;
+
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                var user = await GetCurrentUser();
+                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
+            }
+
+            ViewData["JobOfferCount"] = jobOffers.Count;
+            return View("Index", jobOffers);
+        }
+
         // GET: JobOffer/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
