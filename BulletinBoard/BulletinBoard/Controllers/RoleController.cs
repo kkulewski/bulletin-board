@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BulletinBoard.Data;
 using BulletinBoard.Helpers;
+using BulletinBoard.Models;
+using BulletinBoard.Models.RoleViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Controllers
 {
@@ -12,15 +16,40 @@ namespace BulletinBoard.Controllers
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleController(ApplicationDbContext context)
+        public RoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+
+        // GET: role
+        public async Task<IActionResult> Index()
+        {
+
+            var roles = await _context.Roles.ToListAsync();
+            var users = await _context.ApplicationUsers.ToListAsync();
+
+            var viewModel = users.Select(c =>
+            {
+                var userRole = _userManager.GetRolesAsync(c).Result.FirstOrDefault();
+                var userRoleId = _context.Roles.FirstOrDefault(x => x.NormalizedName == userRole)?.Id;
+                var a = new RoleViewModel
+                {
+                    ApplicationUser = c,
+                    RoleId = userRoleId,
+                    Roles = roles
+                };
+                return a;
+            });
+
+            return View(viewModel);
         }
 
         // GET: role/
         [HttpGet]
-        public IEnumerable<string> Index()
+        public IEnumerable<string> Indexx()
         {
             if (RolesEmpty())
             {

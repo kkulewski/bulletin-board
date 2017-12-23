@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BulletinBoard.Models.RoleViewModels.RoleViewModel>
+
+@{
+    ViewData["Title"] = "Role";
+}
+
+<h3>@ViewData["Title"]</h3>
+<hr/>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ApplicationUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Roles)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <p asp-display-for="@item.ApplicationUser.Email"></p>
+            </td>
+            <td>
+                <select class="form-control" asp-for="@item.RoleId"
+                        asp-items="@(new SelectList(@item.Roles, "Id", "Name", @item.RoleId))"></select>
+            </td>
+            <td>
+                <a class="btn btn-primary btn-sm">Edit</a>
+                <a class="btn btn-info btn-sm">Details</a>
+                <a class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
