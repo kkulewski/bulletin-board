@@ -10,6 +10,9 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
@@ -27,7 +30,10 @@
     <tbody>
     @foreach (var item in Model)
     {
-        <tr asp-action="Details" asp-route-id="@item.JobOfferId">
+        <tr>
+            <td>
+                <p asp-hidden-email="@item.Author.Email"></p>
+            </td>
             <td>
                 <p asp-display-for="@item.Title"></p>
             </td>
