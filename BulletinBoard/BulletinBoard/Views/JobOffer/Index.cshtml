@@ -2,10 +2,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    ViewData["Title"] = "Job offer";
+    ViewData["Title"] = "Job offers";
 }
 
-<h3>@ViewData["Title"] (total: @ViewData["JobOfferCount"])</h3>
+<h3>@ViewData["Title"] <span class="badge">@ViewData["JobOfferCount"]</span></h3>
 <hr />
 <p>
 
