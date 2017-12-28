@@ -30,26 +30,7 @@
     <tbody>
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                <p asp-hidden-email="@item.Author.Email"></p>
-            </td>
-            <td>
-                <p asp-display-for="@item.Title"></p>
-            </td>
-            <td>
-                <p asp-display-for="@item.JobCategory.Name"></p>
-            </td>
-            <td>
-                <p asp-display-for="@item.JobType.Name"></p>
-            </td>
-            <td>
-                <p asp-display-for="@item.Wage"></p>
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
-            </td>
-        </tr>
+        @Html.Partial("_PopularPartial", item)
     }
     </tbody>
 </table>

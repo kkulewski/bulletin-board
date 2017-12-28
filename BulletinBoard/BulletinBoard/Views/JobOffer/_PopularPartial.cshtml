@@ -1,0 +1,21 @@
+﻿@model BulletinBoard.Models.JobOfferViewModels.PopularJobOfferViewModel
+<tr>
+    <td>
+        <p asp-hidden-email="@Model.Author.Email"></p>
+    </td>
+    <td>
+        <p asp-display-for="@Model.Title"></p>
+    </td>
+    <td>
+        <p asp-display-for="@Model.JobCategory.Name"></p>
+    </td>
+    <td>
+        <p asp-display-for="@Model.JobType.Name"></p>
+    </td>
+    <td>
+        <p asp-display-for="@Model.Wage"></p>
+    </td>
+    <td>
+        <a asp-action="Details" asp-route-id="@Model.JobOfferId" class="btn btn-info btn-sm">Details</a>
+    </td>
+</tr>
