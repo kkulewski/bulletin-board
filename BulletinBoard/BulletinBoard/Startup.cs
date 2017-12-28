@@ -63,7 +63,7 @@ namespace BulletinBoard
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/JobOffer/Error");
             }
 
             app.UseStaticFiles();

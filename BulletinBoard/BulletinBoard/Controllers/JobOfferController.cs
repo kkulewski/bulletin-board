@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -28,6 +29,12 @@ namespace BulletinBoard.Controllers
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
+        }
+
+        [AllowAnonymous]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         // GET: JobOffer
