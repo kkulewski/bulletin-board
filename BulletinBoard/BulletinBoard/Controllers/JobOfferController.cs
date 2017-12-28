@@ -77,6 +77,19 @@ namespace BulletinBoard.Controllers
             return View("Index", jobOffers);
         }
 
+        // GET: JobOffer/Popular
+        [AllowAnonymous]
+        public async Task<IActionResult> Popular()
+        {
+            var jobOffers = await GetJobOffersGreedy()
+                .OrderByDescending(m => m.Visits)
+                .Take(5)
+                .Select(m => _mapper.Map<PopularJobOfferViewModel>(m))
+                .ToListAsync();
+
+            return View(jobOffers);
+        }
+
         // GET: JobOffer/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
@@ -145,7 +158,6 @@ namespace BulletinBoard.Controllers
                 LastEdit = DateTime.Now,
                 Wage = model.Wage,
                 Visits = 0
-
             };
 
             _context.Add(jobOffer);

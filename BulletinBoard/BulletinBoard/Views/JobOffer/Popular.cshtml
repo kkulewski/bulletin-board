@@ -1,0 +1,50 @@
+﻿@model IEnumerable<BulletinBoard.Models.JobOfferViewModels.PopularJobOfferViewModel>
+
+@{
+    ViewData["Title"] = "Popular job offers";
+}
+<h2>Welcome to BulletinBoard</h2>
+<hr />
+<h3>@ViewData["Title"]</h3>
+<hr />
+<table class="table table-striped" style="width: 70%; margin: auto;">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobCategory)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Wage)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr asp-action="Details" asp-route-id="@item.JobOfferId">
+            <td>
+                <p asp-display-for="@item.Title"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.JobCategory.Name"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.JobType.Name"></p>
+            </td>
+            <td>
+                <p asp-display-for="@item.Wage"></p>
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.JobOfferId" class="btn btn-info btn-sm">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

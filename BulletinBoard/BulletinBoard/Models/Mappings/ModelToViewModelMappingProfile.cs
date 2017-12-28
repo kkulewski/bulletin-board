@@ -21,7 +21,8 @@ namespace BulletinBoard.Models.Mappings
             CreateMap<JobCategory, DetailsJobCategoryViewModel>();
             CreateMap<JobCategory, EditJobCategoryViewModel>();
 
-            CreateMap<JobOffer, JobOfferViewModel > ();
+            CreateMap<JobOffer, JobOfferViewModel>();
+            CreateMap<JobOffer, PopularJobOfferViewModel>();
             CreateMap<JobOffer, CreateJobOfferViewModel>()
                 .ForMember(dest => dest.JobCategoryId,
                     opts => opts.MapFrom(src => src.JobCategory.JobCategoryId))
