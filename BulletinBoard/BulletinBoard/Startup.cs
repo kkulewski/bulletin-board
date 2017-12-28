@@ -74,6 +74,8 @@ namespace BulletinBoard
 
             dbInitializer.Seed();
 
+            app.UseStatusCodePages();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
