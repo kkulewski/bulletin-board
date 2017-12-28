@@ -32,9 +32,15 @@ namespace BulletinBoard.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var vm = new ErrorViewModel
+            {
+                Response = statusCode?.ToString() ?? "-",
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(vm);
         }
 
         // GET: JobOffer

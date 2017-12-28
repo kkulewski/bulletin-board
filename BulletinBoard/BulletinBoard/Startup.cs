@@ -74,7 +74,7 @@ namespace BulletinBoard
 
             dbInitializer.Seed();
 
-            app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/JobOffer/Error", "?statusCode={0}");
 
             app.UseMvc(routes =>
             {
