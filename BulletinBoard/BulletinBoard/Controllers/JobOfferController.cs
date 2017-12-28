@@ -94,6 +94,10 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
+            jobOffer.Visits += 1;
+            _context.Update(jobOffer);
+            await _context.SaveChangesAsync();
+
             var viewModel = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
 
             if (_signInManager.IsSignedIn(HttpContext.User))
