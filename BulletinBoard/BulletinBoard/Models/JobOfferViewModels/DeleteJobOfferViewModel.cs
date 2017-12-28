@@ -11,7 +11,5 @@
         public JobType JobType { get; set; }
 
         public string Title { get; set; }
-
-        public bool Active { get; set; }
     }
 }

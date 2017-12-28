@@ -35,10 +35,6 @@ namespace BulletinBoard.Models.JobOfferViewModels
         [DataType(DataType.Currency)]
         [Display(Name = "Wage")]
         public decimal Wage { get; set; }
-
-        [Required]
-        [Display(Name = "Active")]
-        public bool Active { get; set; }
         
         public IEnumerable<JobCategory> JobCategories { get; set; }
 

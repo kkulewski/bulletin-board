@@ -24,6 +24,6 @@ namespace BulletinBoard.Models
 
         public decimal Wage { get; set; }
 
-        public bool Active { get; set; }
+        public int Visits { get; set; }
     }
 }

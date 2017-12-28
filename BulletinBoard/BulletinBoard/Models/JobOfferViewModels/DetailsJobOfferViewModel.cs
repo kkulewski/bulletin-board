@@ -24,7 +24,7 @@ namespace BulletinBoard.Models.JobOfferViewModels
 
         public decimal Wage { get; set; }
 
-        public bool Active { get; set; }
+        public int Visits { get; set; }
 
         public bool CanEdit { get; set; }
     }

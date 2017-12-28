@@ -140,7 +140,7 @@ namespace BulletinBoard.Controllers
                 Submitted = DateTime.Now,
                 LastEdit = DateTime.Now,
                 Wage = model.Wage,
-                Active = true
+                Visits = 0
 
             };
 
@@ -202,7 +202,6 @@ namespace BulletinBoard.Controllers
                 jobOffer.Description = model.Description;
                 jobOffer.Wage = model.Wage;
                 jobOffer.LastEdit = DateTime.Now;
-                jobOffer.Active = model.Active;
 
                 _context.Update(jobOffer);
                 await _context.SaveChangesAsync();
@@ -266,8 +265,7 @@ namespace BulletinBoard.Controllers
             return _context.JobOffers
                 .Include(u => u.JobCategory)
                 .Include(u => u.JobType)
-                .Include(u => u.Author)
-                .Where(t => t.Active);
+                .Include(u => u.Author);
         }
 
         private async Task<ApplicationUser> GetCurrentUser()
