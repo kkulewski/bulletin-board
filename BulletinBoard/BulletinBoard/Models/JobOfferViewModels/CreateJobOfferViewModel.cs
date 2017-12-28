@@ -18,7 +18,7 @@ namespace BulletinBoard.Models.JobOfferViewModels
 
         [Required]
         [PostalCode]
-        [Display(Name = "Postal code")]
+        [Display(Name = "Postal code", Prompt = "xx-xxx")]
         public string PostalCode { get; set; }
 
         [Required]
