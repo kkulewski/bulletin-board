@@ -33,6 +33,7 @@ namespace BulletinBoard.Models.JobOfferViewModels
 
         [Required]
         [DataType(DataType.Currency)]
+        [Range(0.0, 1_000_000.0, ErrorMessage = "Wage must be between 0.0 and 1000000.0")]
         [Display(Name = "Wage")]
         public decimal Wage { get; set; }
 
