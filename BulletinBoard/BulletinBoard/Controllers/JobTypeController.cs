@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace BulletinBoard.Controllers
 {
     [Authorize(Roles = RoleHelper.Administrator)]
-    [Route("[controller]/[action]")]
     public class JobTypeController : Controller
     {
         private readonly ApplicationDbContext _context;

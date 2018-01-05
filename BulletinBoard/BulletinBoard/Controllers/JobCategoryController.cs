@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace BulletinBoard.Controllers
 {
     [Authorize(Roles = RoleHelper.Administrator)]
-    [Route("[controller]/[action]")]
     public class JobCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -46,7 +45,7 @@ namespace BulletinBoard.Controllers
             {
                 return View("NotFound");
             }
-
+            
             var viewModel = _mapper.Map<DetailsJobCategoryViewModel>(jobCategory);
             return View(viewModel);
         }

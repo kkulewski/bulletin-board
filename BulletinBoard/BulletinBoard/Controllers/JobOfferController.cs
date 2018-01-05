@@ -54,6 +54,8 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
+
+                // make each offer edit-able when user is its author OR admin/moderator
                 jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
             }
 
@@ -70,6 +72,8 @@ namespace BulletinBoard.Controllers
             }
 
             phrase = phrase.ToLower();
+
+            // select each offer that contains search phrase in given fields, then map it to view models list
             var jobOffers = await GetJobOffersGreedy()
                 .Where(c => c.Title.Contains(phrase) 
                 || c.Description.ToLower().Contains(phrase) 
@@ -82,11 +86,15 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
+
+                // make each offer edit-able when user is its author OR admin/moderator
                 jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
             }
 
+            // pass job offer count and search phrase to the view
             ViewData["JobOfferCount"] = jobOffers.Count;
             ViewData["phrase"] = phrase;
+
             return View("Index", jobOffers);
         }
 
@@ -94,6 +102,7 @@ namespace BulletinBoard.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Popular()
         {
+            // display top5 most popular offers
             var jobOffers = await GetJobOffersGreedy()
                 .OrderByDescending(m => m.Visits)
                 .Take(5)
@@ -129,6 +138,8 @@ namespace BulletinBoard.Controllers
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
                 var user = await GetCurrentUser();
+
+                // make each offer edit-able when user is its author OR admin/moderator
                 viewModel.CanEdit = (viewModel.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator();
             }
 
@@ -291,6 +302,8 @@ namespace BulletinBoard.Controllers
 
         private IQueryable<JobOffer> GetJobOffersGreedy()
         {
+            // greedy load job offers (with all connected data)
+            // as EntityFramework Core does not support lazy-loading yet
             return _context.JobOffers
                 .Include(u => u.JobCategory)
                 .Include(u => u.JobType)
