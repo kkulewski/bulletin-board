@@ -5,6 +5,9 @@ using BulletinBoard.Models.JobTypeViewModels;
 
 namespace BulletinBoard.Models.Mappings
 {
+    /// <summary>
+    /// Default model to view-model automapper mapping profile.
+    /// </summary>
     public class ModelToViewModelMappingProfile : Profile
     {
         public ModelToViewModelMappingProfile()

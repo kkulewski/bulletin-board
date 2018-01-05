@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace BulletinBoard.Helpers.CustomValidators
 {
+    /// <summary>
+    /// Specifies that a first letter of the value is uppercase.
+    /// </summary>
     public class Capitalized : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)

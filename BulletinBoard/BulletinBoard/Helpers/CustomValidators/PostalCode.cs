@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace BulletinBoard.Helpers.CustomValidators
 {
+    /// <summary>
+    /// Specifies that the value is a valid postal code.
+    /// </summary>
     public class PostalCode : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
