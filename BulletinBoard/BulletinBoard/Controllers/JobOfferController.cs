@@ -56,7 +56,12 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                jobOffers.ForEach(async m => m.CanEdit = (m.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator());
+                foreach (var offer in jobOffers)
+                {
+                    offer.CanEdit = offer.Author.Id == user.Id
+                                    || await UserIsAdministrator()
+                                    || await UserIsModerator();
+                }
             }
 
             ViewData["JobOfferCount"] = jobOffers.Count;
@@ -75,11 +80,11 @@ namespace BulletinBoard.Controllers
 
             // select each offer that contains search phrase in given fields, then map it to view models list
             var jobOffers = await GetJobOffersGreedy()
-                .Where(c => c.Title.Contains(phrase) 
-                || c.Description.ToLower().Contains(phrase) 
-                || c.JobType.Name.ToLower().Contains(phrase) 
-                || c.JobCategory.Name.ToLower().Contains(phrase) 
-                || c.Author.Email.ToLower().Contains(phrase))
+                .Where(c => c.Title.Contains(phrase)
+                            || c.Description.ToLower().Contains(phrase)
+                            || c.JobType.Name.ToLower().Contains(phrase)
+                            || c.JobCategory.Name.ToLower().Contains(phrase)
+                            || c.Author.Email.ToLower().Contains(phrase))
                 .Select(m => _mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
@@ -88,7 +93,12 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                jobOffers.ForEach(async m => m.CanEdit = (m.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator());
+                foreach (var offer in jobOffers)
+                {
+                    offer.CanEdit = offer.Author.Id == user.Id
+                                    || await UserIsAdministrator()
+                                    || await UserIsModerator();
+                }
             }
 
             // pass job offer count and search phrase to the view
