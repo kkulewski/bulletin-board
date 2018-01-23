@@ -56,7 +56,7 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
+                jobOffers.ForEach(async m => m.CanEdit = (m.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator());
             }
 
             ViewData["JobOfferCount"] = jobOffers.Count;
@@ -88,7 +88,7 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                jobOffers.ForEach(m => m.CanEdit = (m.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator());
+                jobOffers.ForEach(async m => m.CanEdit = (m.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator());
             }
 
             // pass job offer count and search phrase to the view
@@ -140,7 +140,7 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || UserIsAdministrator() || UserIsModerator();
+                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator();
             }
 
             return View(viewModel);
@@ -205,7 +205,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !UserIsModerator() && !UserIsAdministrator())
+            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !await UserIsModerator() && !await UserIsAdministrator())
             {
                 return View("AccessDenied");
             }
@@ -248,7 +248,7 @@ namespace BulletinBoard.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!JobOfferExists(model.JobOfferId))
+                if (!await JobOfferExists(model.JobOfferId))
                 {
                     return View("NotFound");
                 }
@@ -295,9 +295,9 @@ namespace BulletinBoard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool JobOfferExists(string id)
+        private async Task<bool> JobOfferExists(string id)
         {
-            return _context.JobOffers.Any(e => e.JobOfferId == id);
+            return await _context.JobOffers.AnyAsync(e => e.JobOfferId == id);
         }
 
         private IQueryable<JobOffer> GetJobOffersGreedy()
@@ -315,16 +315,16 @@ namespace BulletinBoard.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
-        private bool UserIsModerator()
+        private async Task<bool> UserIsModerator()
         {
-            var user = GetCurrentUser().Result;
-            return _userManager.IsInRoleAsync(user, RoleHelper.Moderator).Result;
+            var user = await GetCurrentUser();
+            return await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
         }
 
-        private bool UserIsAdministrator()
+        private async Task<bool> UserIsAdministrator()
         {
-            var user = GetCurrentUser().Result;
-            return _userManager.IsInRoleAsync(user, RoleHelper.Administrator).Result;
+            var user = await GetCurrentUser();
+            return await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
         }
     }
 }

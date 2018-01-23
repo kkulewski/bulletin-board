@@ -111,7 +111,7 @@ namespace BulletinBoard.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!JobCategoryExists(model.JobCategoryId))
+                if (!await JobCategoryExists(model.JobCategoryId))
                 {
                     return View("NotFound");
                 }
@@ -158,9 +158,9 @@ namespace BulletinBoard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool JobCategoryExists(string id)
+        private async Task<bool> JobCategoryExists(string id)
         {
-            return _context.JobCategories.Any(e => e.JobCategoryId == id);
+            return await _context.JobCategories.AnyAsync(e => e.JobCategoryId == id);
         }
     }
 }
