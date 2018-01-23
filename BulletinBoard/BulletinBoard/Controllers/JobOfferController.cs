@@ -59,8 +59,8 @@ namespace BulletinBoard.Controllers
                 foreach (var offer in jobOffers)
                 {
                     offer.CanEdit = offer.Author.Id == user.Id
-                                    || await UserIsAdministrator()
-                                    || await UserIsModerator();
+                                    || await IsUserAdministrator()
+                                    || await IsUserModerator();
                 }
             }
 
@@ -96,8 +96,8 @@ namespace BulletinBoard.Controllers
                 foreach (var offer in jobOffers)
                 {
                     offer.CanEdit = offer.Author.Id == user.Id
-                                    || await UserIsAdministrator()
-                                    || await UserIsModerator();
+                                    || await IsUserAdministrator()
+                                    || await IsUserModerator();
                 }
             }
 
@@ -150,7 +150,7 @@ namespace BulletinBoard.Controllers
                 var user = await GetCurrentUser();
 
                 // make each offer edit-able when user is its author OR admin/moderator
-                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || await UserIsAdministrator() || await UserIsModerator();
+                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || await IsUserAdministrator() || await IsUserModerator();
             }
 
             return View(viewModel);
@@ -215,7 +215,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !await UserIsModerator() && !await UserIsAdministrator())
+            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !await IsUserModerator() && !await IsUserAdministrator())
             {
                 return View("AccessDenied");
             }
@@ -325,13 +325,13 @@ namespace BulletinBoard.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
-        private async Task<bool> UserIsModerator()
+        private async Task<bool> IsUserModerator()
         {
             var user = await GetCurrentUser();
             return await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
         }
 
-        private async Task<bool> UserIsAdministrator()
+        private async Task<bool> IsUserAdministrator()
         {
             var user = await GetCurrentUser();
             return await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
