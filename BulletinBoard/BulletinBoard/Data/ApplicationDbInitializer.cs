@@ -19,10 +19,8 @@ namespace BulletinBoard.Data
 
         public void Seed()
         {
-            // create database + apply migrations
             _context.Database.Migrate();
-
-            // add example roles
+            
             if (!_context.Roles.Any())
             {
                 var roleNames = new[]
@@ -38,8 +36,7 @@ namespace BulletinBoard.Data
                     _context.Roles.Add(role);
                 }
             }
-
-            // add administrator account
+            
             if (!_context.ApplicationUsers.Any())
             {
                 const string userName = "admin@admin.com";

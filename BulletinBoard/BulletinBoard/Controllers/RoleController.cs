@@ -32,7 +32,7 @@ namespace BulletinBoard.Controllers
             var viewModel = users.Select(user =>
             {
                 var userRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
-                var userRoleId = _context.Roles.FirstOrDefault(role => role.NormalizedName == userRole).Id;
+                var userRoleId = _context.Roles.FirstOrDefault(role => role.NormalizedName == userRole)?.Id;
                 var vm = new RoleViewModel
                 {
                     ApplicationUser = user,

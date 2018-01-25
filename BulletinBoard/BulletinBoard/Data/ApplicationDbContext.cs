@@ -6,7 +6,6 @@ namespace BulletinBoard.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        // declare each database entity here to access it with dbContext
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<JobCategory> JobCategories { get; set; }
         public virtual DbSet<JobType> JobTypes { get; set; }
