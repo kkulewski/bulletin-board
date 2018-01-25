@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BulletinBoard.Data;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
+using BulletinBoard.Models.ErrorViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
