@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
+using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
 using BulletinBoard.Models.JobTypeViewModels;
 
-namespace BulletinBoard.Models.Mappings
+namespace BulletinBoard.Infrastructure
 {
     /// <summary>
     /// Default model to view-model automapper mapping profile.
     /// </summary>
-    public class ModelToViewModelMappingProfile : Profile
+    public class AutoMapperConfiguration : Profile
     {
-        public ModelToViewModelMappingProfile()
+        public AutoMapperConfiguration()
         {
             CreateMap<JobType, JobTypeViewModel>();
             CreateMap<JobType, CreateJobTypeViewModel>();
