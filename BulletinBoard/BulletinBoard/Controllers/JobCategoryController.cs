@@ -15,19 +15,17 @@ namespace BulletinBoard.Controllers
     public class JobCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public JobCategoryController(ApplicationDbContext context, IMapper mapper)
+        public JobCategoryController(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: JobCategory
         public async Task<IActionResult> Index()
         {
             var jobCategories = await _context.JobCategories
-                .Select(m => _mapper.Map<JobCategoryViewModel>(m)).ToListAsync();
+                .Select(m => Mapper.Map<JobCategoryViewModel>(m)).ToListAsync();
             return View(jobCategories);
         }
 
@@ -46,7 +44,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
             
-            var viewModel = _mapper.Map<DetailsJobCategoryViewModel>(jobCategory);
+            var viewModel = Mapper.Map<DetailsJobCategoryViewModel>(jobCategory);
             return View(viewModel);
         }
 
@@ -87,7 +85,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<EditJobCategoryViewModel>(jobCategory);
+            var viewModel = Mapper.Map<EditJobCategoryViewModel>(jobCategory);
             return View(viewModel);
         }
 
@@ -137,7 +135,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<DeleteJobCategoryViewModel>(jobCategory);
+            var viewModel = Mapper.Map<DeleteJobCategoryViewModel>(jobCategory);
             return View(viewModel);
         }
 

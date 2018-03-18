@@ -19,15 +19,14 @@ namespace BulletinBoard.Controllers
     public class JobOfferController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public JobOfferController(ApplicationDbContext context, IMapper mapper,
-            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public JobOfferController(ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
-            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -49,7 +48,7 @@ namespace BulletinBoard.Controllers
         public async Task<IActionResult> Index()
         {
             var jobOffers = await GetJobOffersGreedy()
-                .Select(m => _mapper.Map<JobOfferViewModel>(m))
+                .Select(m => Mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
             if (_signInManager.IsSignedIn(HttpContext.User))
@@ -84,7 +83,7 @@ namespace BulletinBoard.Controllers
                             || c.JobType.Name.ToLower().Contains(phrase)
                             || c.JobCategory.Name.ToLower().Contains(phrase)
                             || c.Author.Email.ToLower().Contains(phrase))
-                .Select(m => _mapper.Map<JobOfferViewModel>(m))
+                .Select(m => Mapper.Map<JobOfferViewModel>(m))
                 .ToListAsync();
 
             if (_signInManager.IsSignedIn(HttpContext.User))
@@ -110,7 +109,7 @@ namespace BulletinBoard.Controllers
             var jobOffers = await GetJobOffersGreedy()
                 .OrderByDescending(m => m.Visits)
                 .Take(5)
-                .Select(m => _mapper.Map<PopularJobOfferViewModel>(m))
+                .Select(m => Mapper.Map<PopularJobOfferViewModel>(m))
                 .ToListAsync();
 
             return View(jobOffers);
@@ -137,7 +136,7 @@ namespace BulletinBoard.Controllers
             _context.Update(jobOffer);
             await _context.SaveChangesAsync();
 
-            var viewModel = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
+            var viewModel = Mapper.Map<DetailsJobOfferViewModel>(jobOffer);
 
             if (_signInManager.IsSignedIn(HttpContext.User))
             {
@@ -212,7 +211,7 @@ namespace BulletinBoard.Controllers
                 return View("AccessDenied");
             }
 
-            var viewModel = _mapper.Map<EditJobOfferViewModel>(jobOffer);
+            var viewModel = Mapper.Map<EditJobOfferViewModel>(jobOffer);
             viewModel.JobCategories = _context.JobCategories;
             viewModel.JobTypes = _context.JobTypes;
             return View(viewModel);
@@ -276,7 +275,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<DeleteJobOfferViewModel>(jobOffer);
+            var viewModel = Mapper.Map<DeleteJobOfferViewModel>(jobOffer);
             return View(viewModel);
         }
 
