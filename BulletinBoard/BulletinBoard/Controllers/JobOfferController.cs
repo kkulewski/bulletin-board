@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using BulletinBoard.Data;
-using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.ErrorViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
@@ -19,22 +17,20 @@ namespace BulletinBoard.Controllers
     {
         private readonly IJobOfferService _jobOfferService;
         private readonly IJobCategoryService _jobCategoryService;
+        private readonly IAuthService _authService;
         private readonly IJobTypeService _jobTypeService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public JobOfferController(
             IJobOfferService jobOfferService,
             IJobCategoryService jobCategoryService,
             IJobTypeService jobTypeService,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            IAuthService authService,
+            UserManager<ApplicationUser> userManager)
         {
             _jobOfferService = jobOfferService;
             _jobCategoryService = jobCategoryService;
             _jobTypeService = jobTypeService;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _authService = authService;
         }
 
         [AllowAnonymous]
@@ -56,13 +52,13 @@ namespace BulletinBoard.Controllers
             var jobOffers = await _jobOfferService.GetAllOffers();
             var vms = Mapper.Map<IList<JobOfferViewModel>>(jobOffers);
             ViewData["JobOfferCount"] = vms.Count;
-            
-            if (!_signInManager.IsSignedIn(HttpContext.User))
+
+            if (!await _authService.IsSignedIn(HttpContext.User))
             {
                 return View(vms);
             }
 
-            var user = await GetCurrentUser();
+            var user = await _authService.GetSignedUser(User);
             foreach (var offer in vms)
             {
                 offer.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId);
@@ -84,12 +80,12 @@ namespace BulletinBoard.Controllers
             ViewData["JobOfferCount"] = vms.Count;
             ViewData["phrase"] = phrase;
 
-            if (!_signInManager.IsSignedIn(HttpContext.User))
+            if (!await _authService.IsSignedIn(HttpContext.User))
             {
                 return View("Index", vms);
             }
 
-            var user = await GetCurrentUser();
+            var user = await _authService.GetSignedUser(User);
             foreach (var offer in vms)
             {
                 offer.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId);
@@ -124,12 +120,12 @@ namespace BulletinBoard.Controllers
             await _jobOfferService.IncreaseOfferViews(jobOffer);
 
             var vm = Mapper.Map<DetailsJobOfferViewModel>(jobOffer);
-            if (!_signInManager.IsSignedIn(HttpContext.User))
+            if (!await _authService.IsSignedIn(HttpContext.User))
             {
                 return View(vm);
             }
 
-            var user = await GetCurrentUser();
+            var user = await _authService.GetSignedUser(User);
             vm.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, vm.JobOfferId);
             return View(vm);
         }
@@ -137,7 +133,7 @@ namespace BulletinBoard.Controllers
         // GET: JobOffer/Create
         public async Task<IActionResult> Create()
         {
-            var user = GetCurrentUser().Result;
+            var user = await _authService.GetSignedUser(User);
             var viewModel = new CreateJobOfferViewModel
             {
                 AuthorId = user.Id,
@@ -183,7 +179,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var user = await GetCurrentUser();
+            var user = await _authService.GetSignedUser(User);
             if (!await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId))
             {
                 return View("AccessDenied");
@@ -253,11 +249,6 @@ namespace BulletinBoard.Controllers
             }
 
             return View("NotFound");
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            return await _userManager.GetUserAsync(User);
         }
     }
 }

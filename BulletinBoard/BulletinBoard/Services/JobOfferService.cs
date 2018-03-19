@@ -7,7 +7,6 @@ using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Services.Abstract;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Services
@@ -19,7 +18,7 @@ namespace BulletinBoard.Services
         private readonly IJobTypeRepository _jobTypeRepo;
         private readonly IApplicationUserRepository _applicationUserRepo;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthService _authService;
 
         public JobOfferService(
             IJobOfferRepository jobOfferRepo,
@@ -27,14 +26,14 @@ namespace BulletinBoard.Services
             IJobTypeRepository jobTypeRepo,
             IApplicationUserRepository applicationUserRepo,
             IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager)
+            IAuthService authService)
         {
             _jobOfferRepo = jobOfferRepo;
             _jobCategoryRepo = jobCategoryRepo;
             _jobTypeRepo = jobTypeRepo;
             _applicationUserRepo = applicationUserRepo;
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
+            _authService = authService;
         }
 
         public async Task<IList<JobOffer>> GetAllOffers()
@@ -113,8 +112,8 @@ namespace BulletinBoard.Services
             var offer = await _jobOfferRepo.GetById(offerId);
 
             return offer.Author.Id == user.Id
-                   || await IsUserAdministrator(user)
-                   || await IsUserModerator(user);
+                   || await _authService.IsInRole(user, RoleHelper.Administrator)
+                   || await _authService.IsInRole(user, RoleHelper.Moderator);
         }
 
         public async Task<bool> IncreaseOfferViews(JobOffer offer)
@@ -123,16 +122,6 @@ namespace BulletinBoard.Services
             _jobOfferRepo.Update(offer);
             await _unitOfWork.Save();
             return true;
-        }
-
-        private async Task<bool> IsUserModerator(ApplicationUser user)
-        {
-            return await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
-        }
-
-        private async Task<bool> IsUserAdministrator(ApplicationUser user)
-        {
-            return await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
         }
     }
 }
