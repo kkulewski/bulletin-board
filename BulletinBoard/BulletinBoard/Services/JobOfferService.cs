@@ -97,13 +97,14 @@ namespace BulletinBoard.Services
 
         public async Task<IEnumerable<JobOffer>> GetOffersContainingPhrase(string phrase)
         {
-            var p = phrase.ToLower();
-            return (await _jobOfferRepo.GetAll())
-                .Where(c => c.Title.Contains(p)
-                            || c.Description.ToLower().Contains(p)
-                            || c.JobType.Name.ToLower().Contains(p)
-                            || c.JobCategory.Name.ToLower().Contains(p)
-                            || c.Author.Email.ToLower().Contains(p));
+            phrase = phrase.ToLower();
+            var offers = await _jobOfferRepo.GetAll();
+            return offers.Where(c => c.PostalCode.ToLower().Contains(phrase)
+                                     ||c.Title.ToLower().Contains(phrase)
+                                     || c.Description.ToLower().Contains(phrase)
+                                     || c.JobType.Name.ToLower().Contains(phrase)
+                                     || c.JobCategory.Name.ToLower().Contains(phrase)
+                                     || c.Author.Email.ToLower().Contains(phrase));
         }
 
         public async Task<bool> CanUserEditOffer(string userId, string offerId)
