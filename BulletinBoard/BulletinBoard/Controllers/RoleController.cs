@@ -27,13 +27,13 @@ namespace BulletinBoard.Controllers
         // GET: Role
         public async Task<IActionResult> Index()
         {
-            var users = (await _userRepo.GetAll()).ToList();
+            var users = await _userRepo.GetAll();
             var roles = (await _roleRepo.GetAll()).ToList();
 
             var viewModels = users.Select(user =>
             {
                 var userRoleName = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
-                var userRole = roles.FirstOrDefault(x => x.NormalizedName == userRoleName);
+                var userRole = roles.FirstOrDefault(x => x.NormalizedName == RoleHelper.Normalize(userRoleName));
 
                 var vm = new RoleViewModel
                 {
@@ -41,7 +41,7 @@ namespace BulletinBoard.Controllers
                     ApplicationUserId = user.Id,
                     RoleId = userRole?.Id,
                     Roles = roles,
-                    Disabled = string.Equals(userRole?.NormalizedName, RoleHelper.Administrator)
+                    Disabled = string.Equals(userRole?.NormalizedName, RoleHelper.Normalize(RoleHelper.Administrator))
                 };
                 return vm;
             });
