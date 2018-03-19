@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data;
+using BulletinBoard.Data.Repositories;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobTypeViewModels;
@@ -14,19 +14,19 @@ namespace BulletinBoard.Controllers
     [Authorize(Roles = RoleHelper.Administrator)]
     public class JobTypeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IJobTypeRepository _jobTypeRepo;
 
-        public JobTypeController(ApplicationDbContext context)
+        public JobTypeController(IJobTypeRepository jobTypeRepo)
         {
-            _context = context;
+            _jobTypeRepo = jobTypeRepo;
         }
 
         // GET: JobType
         public async Task<IActionResult> Index()
         {
-            var jobTypes = await _context.JobTypes
-                .Select(m => Mapper.Map<JobTypeViewModel>(m)).ToListAsync();
-            return View(jobTypes);
+            var types = await _jobTypeRepo.GetAll();
+            var vm = Mapper.Map<IEnumerable<JobTypeViewModel>>(types);
+            return View(vm);
         }
 
         // GET: JobType/Details/5
@@ -37,15 +37,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobType = await _context.JobTypes
-                .SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _jobTypeRepo.GetById(id);
             if (jobType == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = Mapper.Map<DetailsJobTypeViewModel>(jobType);
-            return View(viewModel);
+            var vm = Mapper.Map<DetailsJobTypeViewModel>(jobType);
+            return View(vm);
         }
 
         // GET: JobType/Create
@@ -64,9 +63,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobType = new JobType {Name = model.Name};
-            _context.Add(jobType);
-            await _context.SaveChangesAsync();
+            await _jobTypeRepo.Add(new JobType { Name = model.Name });
             return RedirectToAction(nameof(Index));
         }
         
@@ -78,15 +75,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobType = await _context.JobTypes
-                .SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _jobTypeRepo.GetById(id);
             if (jobType == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = Mapper.Map<EditJobTypeViewModel>(jobType);
-            return View(viewModel);
+            var vm = Mapper.Map<EditJobTypeViewModel>(jobType);
+            return View(vm);
         }
 
         // POST: JobType/Edit/5
@@ -101,11 +97,9 @@ namespace BulletinBoard.Controllers
 
             try
             {
-                var jobType = await _context.JobTypes
-                    .SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
+                var jobType = await _jobTypeRepo.GetById(model.JobTypeId);
                 jobType.Name = model.Name;
-                _context.Update(jobType);
-                await _context.SaveChangesAsync();
+                await _jobTypeRepo.Update(jobType);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,15 +122,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobType = await _context.JobTypes
-                .SingleOrDefaultAsync(m => m.JobTypeId == id);
+            var jobType = await _jobTypeRepo.GetById(id);
             if (jobType == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = Mapper.Map<DeleteJobTypeViewModel>(jobType);
-            return View(viewModel);
+            var vm = Mapper.Map<DeleteJobTypeViewModel>(jobType);
+            return View(vm);
         }
 
         // POST: JobType/Delete/5
@@ -149,16 +142,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobType = await _context.JobTypes
-                .SingleOrDefaultAsync(m => m.JobTypeId == model.JobTypeId);
-            _context.JobTypes.Remove(jobType);
-            await _context.SaveChangesAsync();
+            var jobType = await _jobTypeRepo.GetById(model.JobTypeId);
+            await _jobTypeRepo.Delete(jobType);
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> JobTypeExists(string id)
         {
-            return await _context.JobTypes.AnyAsync(e => e.JobTypeId == id);
+            return await _jobTypeRepo.GetById(id) != null;
         }
     }
 }
