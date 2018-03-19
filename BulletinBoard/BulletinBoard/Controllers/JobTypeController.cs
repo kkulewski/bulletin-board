@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobTypeViewModels;
+using BulletinBoard.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BulletinBoard.Controllers
@@ -14,18 +13,18 @@ namespace BulletinBoard.Controllers
     [Authorize(Roles = RoleHelper.Administrator)]
     public class JobTypeController : Controller
     {
-        private readonly IJobTypeRepository _jobTypeRepo;
+        private readonly IJobTypeService _jobTypeService;
 
-        public JobTypeController(IJobTypeRepository jobTypeRepo)
+        public JobTypeController(IJobTypeService jobTypeService)
         {
-            _jobTypeRepo = jobTypeRepo;
+            _jobTypeService = jobTypeService;
         }
 
         // GET: JobType
         public async Task<IActionResult> Index()
         {
-            var types = await _jobTypeRepo.GetAll();
-            var vm = Mapper.Map<IEnumerable<JobTypeViewModel>>(types);
+            var result = await _jobTypeService.GetAllTypes();
+            var vm = Mapper.Map<IEnumerable<JobTypeViewModel>>(result);
             return View(vm);
         }
 
@@ -36,8 +35,8 @@ namespace BulletinBoard.Controllers
             {
                 return View("NotFound");
             }
-
-            var jobType = await _jobTypeRepo.GetById(id);
+            
+            var jobType = await _jobTypeService.GetTypeById(id);
             if (jobType == null)
             {
                 return View("NotFound");
@@ -63,8 +62,13 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            await _jobTypeRepo.Add(new JobType { Name = model.Name });
-            return RedirectToAction(nameof(Index));
+            var result = await _jobTypeService.Add(Mapper.Map<JobType>(model));
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View("NotFound");
         }
         
         // GET: JobType/Edit/5
@@ -75,7 +79,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobType = await _jobTypeRepo.GetById(id);
+            var jobType = await _jobTypeService.GetTypeById(id);
             if (jobType == null)
             {
                 return View("NotFound");
@@ -95,23 +99,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            try
+            var type = Mapper.Map<JobType>(model);
+            var result = await _jobTypeService.Edit(type);
+            if (result)
             {
-                var jobType = await _jobTypeRepo.GetById(model.JobTypeId);
-                jobType.Name = model.Name;
-                await _jobTypeRepo.Update(jobType);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await JobTypeExists(model.JobTypeId))
-                {
-                    return View("NotFound");
-                }
-
-                throw;
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
 
         // GET: JobType/Delete/5
@@ -122,7 +117,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobType = await _jobTypeRepo.GetById(id);
+            var jobType = await _jobTypeService.GetTypeById(id);
             if (jobType == null)
             {
                 return View("NotFound");
@@ -142,14 +137,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobType = await _jobTypeRepo.GetById(model.JobTypeId);
-            await _jobTypeRepo.Delete(jobType);
-            return RedirectToAction(nameof(Index));
-        }
+            var jobType = Mapper.Map<JobType>(model);
+            var result = await _jobTypeService.Delete(jobType);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-        private async Task<bool> JobTypeExists(string id)
-        {
-            return await _jobTypeRepo.GetById(id) != null;
+            return View("NotFound");
         }
     }
 }

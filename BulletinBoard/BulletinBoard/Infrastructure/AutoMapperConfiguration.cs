@@ -36,6 +36,12 @@ namespace BulletinBoard.Infrastructure
             CreateMap<JobType, DetailsJobTypeViewModel>();
             CreateMap<JobType, EditJobTypeViewModel>();
 
+            CreateMap<JobTypeViewModel, JobType>();
+            CreateMap<CreateJobTypeViewModel, JobType>();
+            CreateMap<DeleteJobTypeViewModel, JobType>();
+            CreateMap<DetailsJobTypeViewModel, JobType>();
+            CreateMap<EditJobTypeViewModel, JobType>();
+
             #endregion
 
             #region JobOffer

@@ -53,6 +53,7 @@ namespace BulletinBoard
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddTransient<IJobCategoryService, JobCategoryService>();
+            services.AddTransient<IJobTypeService, JobTypeService>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
