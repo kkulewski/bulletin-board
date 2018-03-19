@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BulletinBoard.Data;
+using BulletinBoard.Data.Repositories;
 using BulletinBoard.Models;
 using Microsoft.AspNetCore.Localization;
 
@@ -45,6 +46,8 @@ namespace BulletinBoard
             });
             
             services.AddScoped<ApplicationDbInitializer>();
+            services.AddTransient<IJobCategoryRepository, JobCategoryRepository>();
+
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
             services.AddMvc();
