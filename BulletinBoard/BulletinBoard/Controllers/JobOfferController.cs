@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using BulletinBoard.Data;
+using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.ErrorViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
@@ -26,14 +27,12 @@ namespace BulletinBoard.Controllers
             IJobOfferService jobOfferService,
             IJobCategoryService jobCategoryService,
             IJobTypeService jobTypeService,
-            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
         {
             _jobOfferService = jobOfferService;
             _jobCategoryService = jobCategoryService;
             _jobTypeService = jobTypeService;
-            
             _userManager = userManager;
             _signInManager = signInManager;
         }
