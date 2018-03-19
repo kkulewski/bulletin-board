@@ -1,50 +1,52 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BulletinBoard.Data;
+using BulletinBoard.Data.Repositories;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.RoleViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Controllers
 {
     [Authorize(Roles = RoleHelper.Administrator)]
     public class RoleController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUserRepository _userRepo;
+        private readonly IRoleRepository _roleRepo;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public RoleController(UserManager<ApplicationUser> userManager, IApplicationUserRepository userRepo, IRoleRepository roleRepo)
         {
-            _context = context;
+            _userRepo = userRepo;
+            _roleRepo = roleRepo;
             _userManager = userManager;
         }
 
         // GET: Role
         public async Task<IActionResult> Index()
         {
-            var roles = await _context.Roles.ToListAsync();
-            var users = await _context.ApplicationUsers.ToListAsync();
+            var users = (await _userRepo.GetAll()).ToList();
+            var roles = (await _roleRepo.GetAll()).ToList();
 
-            var viewModel = users.Select(user =>
+            var viewModels = users.Select(user =>
             {
-                var userRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
-                var userRoleId = _context.Roles.FirstOrDefault(role => role.NormalizedName == userRole)?.Id;
+                var userRoleName = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
+                var userRole = roles.FirstOrDefault(x => x.NormalizedName == userRoleName);
+
                 var vm = new RoleViewModel
                 {
                     ApplicationUser = user,
                     ApplicationUserId = user.Id,
-                    RoleId = userRoleId,
+                    RoleId = userRole?.Id,
                     Roles = roles,
-                    Disabled = string.Equals(userRole, RoleHelper.Administrator)
+                    Disabled = string.Equals(userRole?.NormalizedName, RoleHelper.Administrator)
                 };
                 return vm;
             });
 
-            return View(viewModel);
+            return View(viewModels);
         }
 
         // POST: Role/ChangeRole
@@ -56,8 +58,9 @@ namespace BulletinBoard.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            var user = _context.ApplicationUsers.First(c => c.Id == applicationUserId);
-            var newRole = _context.Roles.First(c => c.Id == roleId);
+
+            var user = await _userRepo.GetById(applicationUserId);
+            var newRole = await _roleRepo.GetById(roleId);
 
             var userRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, userRoles);
