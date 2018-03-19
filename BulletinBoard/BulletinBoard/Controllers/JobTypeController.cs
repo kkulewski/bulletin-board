@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data.Repositories;
+using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobTypeViewModels;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Models;
 using Microsoft.EntityFrameworkCore;
 

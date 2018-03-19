@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BulletinBoard.Data.Repositories;
+using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.RoleViewModels;

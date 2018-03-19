@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories;
+using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Models;
 using Microsoft.AspNetCore.Localization;
 

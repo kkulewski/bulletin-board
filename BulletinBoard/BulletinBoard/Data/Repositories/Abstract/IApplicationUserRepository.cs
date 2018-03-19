@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using BulletinBoard.Models;
 
-namespace BulletinBoard.Data.Repositories
+namespace BulletinBoard.Data.Repositories.Abstract
 {
     public interface IApplicationUserRepository
     {

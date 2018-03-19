@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace BulletinBoard.Data.Repositories
+namespace BulletinBoard.Data.Repositories.Abstract
 {
     public interface IRoleRepository
     {
