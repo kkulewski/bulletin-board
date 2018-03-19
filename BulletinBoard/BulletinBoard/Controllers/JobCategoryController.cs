@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
-using BulletinBoard.Services;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BulletinBoard.Controllers

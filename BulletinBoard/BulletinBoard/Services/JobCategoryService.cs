@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Models;
+using BulletinBoard.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Services

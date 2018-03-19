@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using BulletinBoard.Models;
 
-namespace BulletinBoard.Services
+namespace BulletinBoard.Services.Abstract
 {
     public interface IJobCategoryService
     {
