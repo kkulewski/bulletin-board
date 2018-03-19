@@ -13,17 +13,32 @@ namespace BulletinBoard.Infrastructure
     {
         public AutoMapperConfiguration()
         {
-            CreateMap<JobType, JobTypeViewModel>();
-            CreateMap<JobType, CreateJobTypeViewModel>();
-            CreateMap<JobType, DeleteJobTypeViewModel>();
-            CreateMap<JobType, DetailsJobTypeViewModel>();
-            CreateMap<JobType, EditJobTypeViewModel>();
+            #region JobCategory
 
             CreateMap<JobCategory, JobCategoryViewModel>();
             CreateMap<JobCategory, CreateJobCategoryViewModel>();
             CreateMap<JobCategory, DeleteJobCategoryViewModel>();
             CreateMap<JobCategory, DetailsJobCategoryViewModel>();
             CreateMap<JobCategory, EditJobCategoryViewModel>();
+
+            CreateMap<CreateJobCategoryViewModel, JobCategory>();
+            CreateMap<DeleteJobCategoryViewModel, JobCategory>();
+            CreateMap<DetailsJobCategoryViewModel, JobCategory>();
+            CreateMap<EditJobCategoryViewModel, JobCategory>();
+
+            #endregion
+
+            #region JobType
+            
+            CreateMap<JobType, JobTypeViewModel>();
+            CreateMap<JobType, CreateJobTypeViewModel>();
+            CreateMap<JobType, DeleteJobTypeViewModel>();
+            CreateMap<JobType, DetailsJobTypeViewModel>();
+            CreateMap<JobType, EditJobTypeViewModel>();
+
+            #endregion
+
+            #region JobOffer
 
             CreateMap<JobOffer, JobOfferViewModel>();
             CreateMap<JobOffer, PopularJobOfferViewModel>();
@@ -39,6 +54,8 @@ namespace BulletinBoard.Infrastructure
                     opts => opts.MapFrom(src => src.JobCategory.JobCategoryId))
                 .ForMember(dest => dest.JobTypeId,
                     opts => opts.MapFrom(src => src.JobType.JobTypeId));
+
+            #endregion
         }
     }
 }

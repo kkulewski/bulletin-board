@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
+using BulletinBoard.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BulletinBoard.Controllers
@@ -14,17 +13,17 @@ namespace BulletinBoard.Controllers
     [Authorize(Roles = RoleHelper.Administrator)]
     public class JobCategoryController : Controller
     {
-        private readonly IJobCategoryRepository _jobCategoryRepo;
+        private readonly IJobCategoryService _jobCategoryService;
 
-        public JobCategoryController(IJobCategoryRepository jobCategoryRepo)
+        public JobCategoryController(IJobCategoryService jobCategoryService)
         {
-            _jobCategoryRepo = jobCategoryRepo;
+            _jobCategoryService = jobCategoryService;
         }
 
         // GET: JobCategory
         public async Task<IActionResult> Index()
         {
-            var jobCategories = await _jobCategoryRepo.GetAll();
+            var jobCategories = await _jobCategoryService.GetAllCategories();
             var vm = Mapper.Map<IEnumerable<JobCategoryViewModel>>(jobCategories);
             return View(vm);
         }
@@ -36,7 +35,8 @@ namespace BulletinBoard.Controllers
             {
                 return View("NotFound");
             }
-            var category = await _jobCategoryRepo.GetById(id);
+
+            var category = await _jobCategoryService.GetCategoryById(id);
             if (category == null)
             {
                 return View("NotFound");
@@ -62,8 +62,13 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            await _jobCategoryRepo.Add(new JobCategory { Name = model.Name });
-            return RedirectToAction(nameof(Index));
+            var result = await _jobCategoryService.Add(Mapper.Map<JobCategory>(model));
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View("NotFound");
         }
 
         // GET: JobCategory/Edit/5
@@ -74,7 +79,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var category = await _jobCategoryRepo.GetById(id);
+            var category = await _jobCategoryService.GetCategoryById(id);
             if (category == null)
             {
                 return View("NotFound");
@@ -94,23 +99,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            try
+            var category = Mapper.Map<JobCategory>(model);
+            var result = await _jobCategoryService.Edit(category);
+            if (result)
             {
-                var category = await _jobCategoryRepo.GetById(model.JobCategoryId);
-                category.Name = model.Name;
-                await _jobCategoryRepo.Update(category);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await JobCategoryExists(model.JobCategoryId))
-                {
-                    return View("NotFound");
-                }
-
-                throw;
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
 
         // GET: JobCategory/Delete/5
@@ -121,7 +117,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var category = await _jobCategoryRepo.GetById(id);
+            var category = await _jobCategoryService.GetCategoryById(id);
             if (category == null)
             {
                 return View("NotFound");
@@ -141,15 +137,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var category = await _jobCategoryRepo.GetById(model.JobCategoryId);
-            await _jobCategoryRepo.Delete(category);
+            var category = Mapper.Map<JobCategory>(model);
+            var result = await _jobCategoryService.Delete(category);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> JobCategoryExists(string id)
-        {
-            return await _jobCategoryRepo.GetById(id) != null;
+            return View("NotFound");
         }
     }
 }
