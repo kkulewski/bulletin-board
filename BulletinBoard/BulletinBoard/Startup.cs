@@ -47,6 +47,7 @@ namespace BulletinBoard
             
             services.AddScoped<ApplicationDbInitializer>();
             services.AddTransient<IJobCategoryRepository, JobCategoryRepository>();
+            services.AddTransient<IJobTypeRepository, JobTypeRepository>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
