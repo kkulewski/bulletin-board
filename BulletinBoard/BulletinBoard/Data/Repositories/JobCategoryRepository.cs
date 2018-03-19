@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoard.Data.Repositories
 {
-    class JobCategoryRepository : IJobCategoryRepository
+    internal class JobCategoryRepository : IJobCategoryRepository
     {
         private readonly ApplicationDbContext _context;
 
