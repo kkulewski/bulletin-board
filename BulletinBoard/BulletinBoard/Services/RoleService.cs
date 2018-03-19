@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
-using BulletinBoard.Models;
 using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,18 +14,18 @@ namespace BulletinBoard.Services
         private readonly IRoleRepository _roleRepo;
         private readonly IApplicationUserRepository _userRepo;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthService _authService;
 
         public RoleService(
             IRoleRepository roleRepo,
             IApplicationUserRepository userRepo,
             IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager)
+            IAuthService authService)
         {
             _roleRepo = roleRepo;
             _userRepo = userRepo;
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
+            _authService = authService;
         }
 
         public async Task<IEnumerable<IdentityRole>> GetAllRoles()
@@ -38,7 +37,7 @@ namespace BulletinBoard.Services
         {
             var user = await _userRepo.GetById(userId);
 
-            var userRoleNames = await _userManager.GetRolesAsync(user);
+            var userRoleNames = await _authService.GetUserRoles(user);
             var userRoleName = userRoleNames.FirstOrDefault();
 
             var roles = await _roleRepo.GetAll();
@@ -49,10 +48,10 @@ namespace BulletinBoard.Services
         {
             var user = await _userRepo.GetById(userId);
             var newRole = await _roleRepo.GetById(newRoleId);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await _authService.GetUserRoles(user);
 
-            await _userManager.RemoveFromRolesAsync(user, userRoles);
-            await _userManager.AddToRoleAsync(user, newRole.Name);
+            await _authService.RemoveRolesFromUser(user, userRoles);
+            await _authService.AddRoleToUser(user, newRole.Name);
 
             await _unitOfWork.Save();
             return true;

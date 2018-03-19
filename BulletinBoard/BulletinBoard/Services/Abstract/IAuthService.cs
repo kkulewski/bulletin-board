@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BulletinBoard.Models;
 
@@ -14,8 +15,14 @@ namespace BulletinBoard.Services.Abstract
 
         Task<bool> IsSignedIn(ClaimsPrincipal claimsUser);
 
+        Task<ApplicationUser> GetSignedUser(ClaimsPrincipal claimsUser);
+
         Task<bool> IsInRole(ApplicationUser user, string roleName);
 
-        Task<ApplicationUser> GetSignedUser(ClaimsPrincipal claimsUser);
+        Task<IList<string>> GetUserRoles(ApplicationUser user);
+
+        Task<bool> AddRoleToUser(ApplicationUser user, string roleName);
+
+        Task<bool> RemoveRolesFromUser(ApplicationUser user, IList<string> roleNames);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
@@ -61,6 +62,23 @@ namespace BulletinBoard.Services
         public async Task<bool> IsInRole(ApplicationUser user, string roleName)
         {
             return await _userManager.IsInRoleAsync(user, roleName);
+        }
+
+        public async Task<IList<string>> GetUserRoles(ApplicationUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
+
+        public async Task<bool> AddRoleToUser(ApplicationUser user, string roleName)
+        {
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> RemoveRolesFromUser(ApplicationUser user, IList<string> roleNames)
+        {
+            var result = await _userManager.RemoveFromRolesAsync(user, roleNames);
+            return result.Succeeded;
         }
     }
 }
