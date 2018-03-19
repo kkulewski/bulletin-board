@@ -61,6 +61,11 @@ namespace BulletinBoard.Infrastructure
                 .ForMember(dest => dest.JobTypeId,
                     opts => opts.MapFrom(src => src.JobType.JobTypeId));
 
+            CreateMap<CreateJobOfferViewModel, JobOffer>();
+            CreateMap<DeleteJobOfferViewModel, JobOffer>();
+            CreateMap<DetailsJobOfferViewModel, JobOffer>();
+            CreateMap<EditJobOfferViewModel, JobOffer>();
+
             #endregion
         }
     }

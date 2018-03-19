@@ -51,11 +51,13 @@ namespace BulletinBoard
             services.AddScoped<ApplicationDbInitializer>();
             services.AddTransient<IJobCategoryRepository, JobCategoryRepository>();
             services.AddTransient<IJobTypeRepository, JobTypeRepository>();
+            services.AddTransient<IJobOfferRepository, JobOfferRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJobCategoryService, JobCategoryService>();
             services.AddTransient<IJobTypeService, JobTypeService>();
+            services.AddTransient<IJobOfferService, JobOfferService>();
             services.AddTransient<IRoleService, RoleService>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
