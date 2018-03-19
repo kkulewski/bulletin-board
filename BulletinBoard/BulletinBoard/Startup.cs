@@ -52,6 +52,7 @@ namespace BulletinBoard
             services.AddTransient<IJobTypeRepository, JobTypeRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJobCategoryService, JobCategoryService>();
             services.AddTransient<IJobTypeService, JobTypeService>();
 

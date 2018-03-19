@@ -25,22 +25,19 @@ namespace BulletinBoard.Data.Repositories
             return await _context.JobCategories.FirstOrDefaultAsync(x => x.JobCategoryId == id);
         }
 
-        public async Task Add(JobCategory item)
+        public void Add(JobCategory item)
         {
-            await _context.AddAsync(item);
-            await _context.SaveChangesAsync();
+            _context.Add(item);
         }
 
-        public async Task Update(JobCategory item)
+        public void Update(JobCategory item)
         {
             _context.Update(item);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(JobCategory item)
+        public void Delete(JobCategory item)
         {
             _context.Remove(item);
-            await _context.SaveChangesAsync();
         }
     }
 }

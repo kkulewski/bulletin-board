@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace BulletinBoard.Services
     public class JobCategoryService : IJobCategoryService
     {
         private readonly IJobCategoryRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JobCategoryService(IJobCategoryRepository repo)
+        public JobCategoryService(IJobCategoryRepository repo, IUnitOfWork unitOfWork)
         {
             _repo = repo;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<JobCategory>> GetAllCategories()
@@ -27,7 +30,8 @@ namespace BulletinBoard.Services
 
         public async Task<bool> Add(JobCategory item)
         {
-            await _repo.Add(item);
+            _repo.Add(item);
+            await _unitOfWork.Save();
             return true;
         }
 
@@ -38,7 +42,8 @@ namespace BulletinBoard.Services
 
             try
             {
-                await _repo.Update(category);
+                _repo.Update(category);
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -50,7 +55,8 @@ namespace BulletinBoard.Services
 
         public async Task<bool> Delete(JobCategory item)
         {
-            await _repo.Delete(item);
+            _repo.Delete(item);
+            await _unitOfWork.Save();
             return true;
         }
     }

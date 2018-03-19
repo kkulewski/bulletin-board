@@ -10,10 +10,10 @@ namespace BulletinBoard.Data.Repositories.Abstract
 
         Task<JobType> GetById(string id);
 
-        Task Add(JobType item);
+        void Add(JobType item);
 
-        Task Update(JobType item);
+        void Update(JobType item);
 
-        Task Delete(JobType item);
+        void Delete(JobType item);
     }
 }
