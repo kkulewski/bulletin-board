@@ -9,6 +9,9 @@ namespace BulletinBoard.Models.JobOfferViewModels
         public string JobOfferId { get; set; }
 
         [Required]
+        public string AuthorId { get; set; }
+
+        [Required]
         [Display(Name = "Category")]
         public string JobCategoryId { get; set; }
 

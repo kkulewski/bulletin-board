@@ -138,8 +138,10 @@ namespace BulletinBoard.Controllers
         // GET: JobOffer/Create
         public async Task<IActionResult> Create()
         {
+            var user = GetCurrentUser().Result;
             var viewModel = new CreateJobOfferViewModel
             {
+                AuthorId = user.Id,
                 JobCategories = await _jobCategoryService.GetAllCategories(),
                 JobTypes = await _jobTypeService.GetAllTypes()
             };

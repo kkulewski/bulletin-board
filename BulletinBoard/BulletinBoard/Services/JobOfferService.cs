@@ -49,6 +49,9 @@ namespace BulletinBoard.Services
 
         public async Task<bool> Add(JobOffer item)
         {
+            item.Submitted = DateTime.Now;
+            item.LastEdit = DateTime.Now;
+
             _jobOfferRepo.Add(item);
             await _unitOfWork.Save();
             return true;
@@ -57,8 +60,8 @@ namespace BulletinBoard.Services
         public async Task<bool> Edit(JobOffer item)
         {
             var offer = await _jobOfferRepo.GetById(item.JobOfferId);
-            offer.JobCategory = await _jobCategoryRepo.GetById(item.JobCategory.JobCategoryId);
-            offer.JobType = await _jobTypeRepo.GetById(item.JobType.JobTypeId);
+            offer.JobCategory = await _jobCategoryRepo.GetById(item.JobCategoryId);
+            offer.JobType = await _jobTypeRepo.GetById(item.JobTypeId);
             offer.PostalCode = item.PostalCode;
             offer.Title = item.Title;
             offer.Description = item.Description;
