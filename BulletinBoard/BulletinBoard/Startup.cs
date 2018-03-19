@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories;
 using BulletinBoard.Data.Repositories.Abstract;
+using BulletinBoard.Helpers.Filters;
 using BulletinBoard.Models;
 using BulletinBoard.Services;
 using BulletinBoard.Services.Abstract;
@@ -62,7 +63,11 @@ namespace BulletinBoard
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ExampleActionFilter));
+            });
+            
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer dbInitializer)
