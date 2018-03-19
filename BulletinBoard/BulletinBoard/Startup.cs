@@ -10,6 +10,7 @@ using BulletinBoard.Data.Repositories;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Models;
 using BulletinBoard.Services;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Localization;
 
 namespace BulletinBoard
@@ -55,6 +56,7 @@ namespace BulletinBoard
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJobCategoryService, JobCategoryService>();
             services.AddTransient<IJobTypeService, JobTypeService>();
+            services.AddTransient<IRoleService, RoleService>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();

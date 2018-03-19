@@ -3,49 +3,40 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
-using BulletinBoard.Models;
 using BulletinBoard.Models.RoleViewModels;
 using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace BulletinBoard.Controllers
 {
     [Authorize(Roles = RoleHelper.Administrator)]
     public class RoleController : Controller
     {
+        private readonly IRoleService _roleService;
         private readonly IApplicationUserRepository _userRepo;
-        private readonly IRoleRepository _roleRepo;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleController(UserManager<ApplicationUser> userManager, IApplicationUserRepository userRepo, IRoleRepository roleRepo)
+        public RoleController(IRoleService roleService, IApplicationUserRepository userRepo)
         {
+            _roleService = roleService;
             _userRepo = userRepo;
-            _roleRepo = roleRepo;
-            _userManager = userManager;
         }
 
         // GET: Role
         public async Task<IActionResult> Index()
         {
             var users = await _userRepo.GetAll();
-            var roles = (await _roleRepo.GetAll()).ToList();
+            var roles = await _roleService.GetAllRoles();
 
             var viewModels = users.Select(user =>
-            {
-                var userRoleName = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
-                var userRole = roles.FirstOrDefault(x => x.NormalizedName == RoleHelper.Normalize(userRoleName));
-
-                var vm = new RoleViewModel
+                new RoleViewModel
                 {
                     ApplicationUser = user,
                     ApplicationUserId = user.Id,
-                    RoleId = userRole?.Id,
+                    RoleId = _roleService.GetUserRole(user.Id).Result.Id,
                     Roles = roles,
-                    Disabled = string.Equals(userRole?.NormalizedName, RoleHelper.Normalize(RoleHelper.Administrator))
-                };
-                return vm;
-            });
+                    Disabled = _roleService.IsUserAdministrator(user.Id).Result
+                }
+            );
 
             return View(viewModels);
         }
@@ -53,21 +44,20 @@ namespace BulletinBoard.Controllers
         // POST: Role/ChangeRole
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeRole(string applicationUserId, string roleId)
+        public async Task<IActionResult> ChangeRole(string applicationUserId, string newRoleId)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            var user = await _userRepo.GetById(applicationUserId);
-            var newRole = await _roleRepo.GetById(roleId);
+            var result = await _roleService.ChangeUserRole(applicationUserId, newRoleId);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, userRoles);
-            await _userManager.AddToRoleAsync(user, newRole.Name);
-
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
     }
 }
