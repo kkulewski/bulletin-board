@@ -1,26 +1,19 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using BulletinBoard.Models;
 using BulletinBoard.Models.AccountViewModels;
-using BulletinBoard.Helpers;
+using BulletinBoard.Services.Abstract;
 
 namespace BulletinBoard.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IAuthService _authService;
 
-        public AccountController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+        public AccountController(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _authService = authService;
         }
 
         [TempData]
@@ -28,11 +21,8 @@ namespace BulletinBoard.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
+        public IActionResult Login(string returnUrl = null)
         {
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -43,34 +33,19 @@ namespace BulletinBoard.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = await _signInManager
-                    .PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-
-                if (result.Succeeded)
-                {
-                    return RedirectToLocal(returnUrl);
-                }
-
-                if (result.IsLockedOut)
-                {
-                    return RedirectToAction(nameof(Lockout));
-                }
-
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
+            var result = await _authService.Login(model.Email, model.Password, model.RememberMe);
+            if (result)
+            {
+                return RedirectToLocal(returnUrl);
+            }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Lockout()
-        {
-            return View();
+            return View(model);
         }
 
         [HttpGet]
@@ -87,20 +62,17 @@ namespace BulletinBoard.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, RoleHelper.User);
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToLocal(returnUrl);
-                }
-                AddErrors(result);
+                return View(model);
             }
 
-            // If we got this far, something failed, redisplay form
+            var result = await _authService.Register(model.Email, model.Password);
+            if (result)
+            {
+                return RedirectToLocal(returnUrl);
+            }
+
             return View(model);
         }
 
@@ -108,25 +80,8 @@ namespace BulletinBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _authService.Logout();
             return RedirectToAction(nameof(JobOfferController.Popular), "JobOffer");
-        }
-
-
-        [HttpGet]
-        public IActionResult AccessDenied()
-        {
-            return View("AccessDenied");
-        }
-
-        #region Helpers
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
         }
 
         private IActionResult RedirectToLocal(string returnUrl)
@@ -135,12 +90,8 @@ namespace BulletinBoard.Controllers
             {
                 return Redirect(returnUrl);
             }
-            else
-            {
-                return RedirectToAction(nameof(JobOfferController.Popular), "JobOffer");
-            }
-        }
 
-        #endregion
+            return RedirectToAction(nameof(JobOfferController.Popular), "JobOffer");
+        }
     }
 }

@@ -1,15 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data;
-using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.ErrorViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,18 +15,22 @@ namespace BulletinBoard.Controllers
     [Authorize]
     public class JobOfferController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IJobOfferService _jobOfferService;
+        private readonly IJobCategoryService _jobCategoryService;
+        private readonly IAuthService _authService;
+        private readonly IJobTypeService _jobTypeService;
 
-        public JobOfferController(ApplicationDbContext context, IMapper mapper,
-            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public JobOfferController(
+            IJobOfferService jobOfferService,
+            IJobCategoryService jobCategoryService,
+            IJobTypeService jobTypeService,
+            IAuthService authService,
+            UserManager<ApplicationUser> userManager)
         {
-            _context = context;
-            _mapper = mapper;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _jobOfferService = jobOfferService;
+            _jobCategoryService = jobCategoryService;
+            _jobTypeService = jobTypeService;
+            _authService = authService;
         }
 
         [AllowAnonymous]
@@ -48,23 +49,22 @@ namespace BulletinBoard.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var jobOffers = await GetJobOffersGreedy()
-                .Select(m => _mapper.Map<JobOfferViewModel>(m))
-                .ToListAsync();
+            var jobOffers = await _jobOfferService.GetAllOffers();
+            var vms = Mapper.Map<IList<JobOfferViewModel>>(jobOffers);
+            ViewData["JobOfferCount"] = vms.Count;
 
-            if (_signInManager.IsSignedIn(HttpContext.User))
+            if (!await _authService.IsSignedIn(HttpContext.User))
             {
-                var user = await GetCurrentUser();
-                foreach (var offer in jobOffers)
-                {
-                    offer.CanEdit = offer.Author.Id == user.Id
-                                    || await IsUserAdministrator()
-                                    || await IsUserModerator();
-                }
+                return View(vms);
             }
 
-            ViewData["JobOfferCount"] = jobOffers.Count;
-            return View(jobOffers);
+            var user = await _authService.GetSignedUser(User);
+            foreach (var offer in vms)
+            {
+                offer.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId);
+            }
+
+            return View(vms);
         }
 
         [AllowAnonymous]
@@ -75,45 +75,31 @@ namespace BulletinBoard.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            phrase = phrase.ToLower();
-
-            // filter offers that contains search phrase, then map them to view models
-            var jobOffers = await GetJobOffersGreedy()
-                .Where(c => c.Title.Contains(phrase)
-                            || c.Description.ToLower().Contains(phrase)
-                            || c.JobType.Name.ToLower().Contains(phrase)
-                            || c.JobCategory.Name.ToLower().Contains(phrase)
-                            || c.Author.Email.ToLower().Contains(phrase))
-                .Select(m => _mapper.Map<JobOfferViewModel>(m))
-                .ToListAsync();
-
-            if (_signInManager.IsSignedIn(HttpContext.User))
-            {
-                var user = await GetCurrentUser();
-                foreach (var offer in jobOffers)
-                {
-                    offer.CanEdit = offer.Author.Id == user.Id
-                                    || await IsUserAdministrator()
-                                    || await IsUserModerator();
-                }
-            }
-            
-            ViewData["JobOfferCount"] = jobOffers.Count;
+            var matchingOffers = await _jobOfferService.GetOffersContainingPhrase(phrase);
+            var vms = Mapper.Map<IList<JobOfferViewModel>>(matchingOffers);
+            ViewData["JobOfferCount"] = vms.Count;
             ViewData["phrase"] = phrase;
-            return View("Index", jobOffers);
+
+            if (!await _authService.IsSignedIn(HttpContext.User))
+            {
+                return View("Index", vms);
+            }
+
+            var user = await _authService.GetSignedUser(User);
+            foreach (var offer in vms)
+            {
+                offer.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId);
+            }
+            return View("Index", vms);
         }
 
         // GET: JobOffer/Popular
         [AllowAnonymous]
         public async Task<IActionResult> Popular()
         {
-            var jobOffers = await GetJobOffersGreedy()
-                .OrderByDescending(m => m.Visits)
-                .Take(5)
-                .Select(m => _mapper.Map<PopularJobOfferViewModel>(m))
-                .ToListAsync();
-
-            return View(jobOffers);
+            var popularJobOffers = await _jobOfferService.GetMostPopularOffers();
+            var vms = Mapper.Map<IEnumerable<PopularJobOfferViewModel>>(popularJobOffers);
+            return View(vms);
         }
 
         // GET: JobOffer/Details/5
@@ -125,36 +111,34 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobOffer = await GetJobOffersGreedy()
-                .SingleOrDefaultAsync(m => m.JobOfferId == id);
-
+            var jobOffer = await _jobOfferService.GetOfferById(id);
             if (jobOffer == null)
             {
                 return View("NotFound");
             }
 
-            jobOffer.Visits += 1;
-            _context.Update(jobOffer);
-            await _context.SaveChangesAsync();
+            await _jobOfferService.IncreaseOfferViews(jobOffer);
 
-            var viewModel = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
-
-            if (_signInManager.IsSignedIn(HttpContext.User))
+            var vm = Mapper.Map<DetailsJobOfferViewModel>(jobOffer);
+            if (!await _authService.IsSignedIn(HttpContext.User))
             {
-                var user = await GetCurrentUser();
-                viewModel.CanEdit = (viewModel.Author.Id == user.Id) || await IsUserAdministrator() || await IsUserModerator();
+                return View(vm);
             }
 
-            return View(viewModel);
+            var user = await _authService.GetSignedUser(User);
+            vm.CanEdit = await _jobOfferService.CanUserEditOffer(user.Id, vm.JobOfferId);
+            return View(vm);
         }
 
         // GET: JobOffer/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = await _authService.GetSignedUser(User);
             var viewModel = new CreateJobOfferViewModel
             {
-                JobCategories = _context.JobCategories,
-                JobTypes = _context.JobTypes
+                AuthorId = user.Id,
+                JobCategories = await _jobCategoryService.GetAllCategories(),
+                JobTypes = await _jobTypeService.GetAllTypes()
             };
 
             return View(viewModel);
@@ -167,28 +151,19 @@ namespace BulletinBoard.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.JobCategories = _context.JobCategories;
-                model.JobTypes = _context.JobTypes;
+                model.JobCategories = await _jobCategoryService.GetAllCategories();
+                model.JobTypes = await _jobTypeService.GetAllTypes();
                 return View(model);
             }
 
-            var jobOffer = new JobOffer
+            var jobOffer = Mapper.Map<JobOffer>(model);
+            var result = await _jobOfferService.Add(jobOffer);
+            if (result)
             {
-                Author = await GetCurrentUser(),
-                JobCategory = await _context.JobCategories.SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId),
-                JobType = await _context.JobTypes.SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId),
-                PostalCode = model.PostalCode,
-                Title = model.Title,
-                Description = model.Description,
-                Submitted = DateTime.Now,
-                LastEdit = DateTime.Now,
-                Wage = model.Wage,
-                Visits = 0
-            };
+                return RedirectToAction(nameof(Index));
+            }
 
-            _context.Add(jobOffer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
 
         // GET: JobOffer/Edit/5
@@ -198,24 +173,22 @@ namespace BulletinBoard.Controllers
             {
                 return View("NotFound");
             }
-
-            var jobOffer = await GetJobOffersGreedy()
-                .SingleOrDefaultAsync(m => m.JobOfferId == id);
-
-            if (jobOffer == null)
+            var offer = await _jobOfferService.GetOfferById(id);
+            if (offer == null)
             {
                 return View("NotFound");
             }
 
-            if (jobOffer.Author.Id != (await GetCurrentUser()).Id && !await IsUserModerator() && !await IsUserAdministrator())
+            var user = await _authService.GetSignedUser(User);
+            if (!await _jobOfferService.CanUserEditOffer(user.Id, offer.JobOfferId))
             {
                 return View("AccessDenied");
             }
 
-            var viewModel = _mapper.Map<EditJobOfferViewModel>(jobOffer);
-            viewModel.JobCategories = _context.JobCategories;
-            viewModel.JobTypes = _context.JobTypes;
-            return View(viewModel);
+            var vm = Mapper.Map<EditJobOfferViewModel>(offer);
+            vm.JobCategories = await _jobCategoryService.GetAllCategories();
+            vm.JobTypes = await _jobTypeService.GetAllTypes();
+            return View(vm);
         }
 
         // POST: JobOffer/Edit/5
@@ -225,40 +198,19 @@ namespace BulletinBoard.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.JobCategories = _context.JobCategories;
-                model.JobTypes = _context.JobTypes;
+                model.JobCategories = await _jobCategoryService.GetAllCategories();
+                model.JobTypes = await _jobTypeService.GetAllTypes();
                 return View(model);
             }
 
-            try
+            var offer = Mapper.Map<JobOffer>(model);
+            var result = await _jobOfferService.Edit(offer);
+            if (result)
             {
-                var jobOffer = await _context.JobOffers
-                    .SingleOrDefaultAsync(m => m.JobOfferId == model.JobOfferId);
-
-                jobOffer.JobCategory = await _context.JobCategories
-                    .SingleOrDefaultAsync(c => c.JobCategoryId == model.JobCategoryId);
-                jobOffer.JobType = await _context.JobTypes
-                    .SingleOrDefaultAsync(c => c.JobTypeId == model.JobTypeId);
-                jobOffer.PostalCode = model.PostalCode;
-                jobOffer.Title = model.Title;
-                jobOffer.Description = model.Description;
-                jobOffer.Wage = model.Wage;
-                jobOffer.LastEdit = DateTime.Now;
-
-                _context.Update(jobOffer);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await JobOfferExists(model.JobOfferId))
-                {
-                    return View("NotFound");
-                }
-
-                throw;
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
 
         // GET: JobOffer/Delete/5
@@ -269,14 +221,13 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobOffer = await _context.JobOffers
-                .SingleOrDefaultAsync(m => m.JobOfferId == id);
+            var jobOffer = await _jobOfferService.GetOfferById(id);
             if (jobOffer == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<DeleteJobOfferViewModel>(jobOffer);
+            var viewModel = Mapper.Map<DeleteJobOfferViewModel>(jobOffer);
             return View(viewModel);
         }
 
@@ -289,43 +240,15 @@ namespace BulletinBoard.Controllers
             {
                 return View(model);
             }
+            
+            var offer = Mapper.Map<JobOffer>(model);
+            var result = await _jobOfferService.Delete(offer);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-            var jobOffer = await _context.JobOffers
-                .SingleOrDefaultAsync(m => m.JobOfferId == model.JobOfferId);
-            _context.JobOffers.Remove(jobOffer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> JobOfferExists(string id)
-        {
-            return await _context.JobOffers.AnyAsync(e => e.JobOfferId == id);
-        }
-
-        private IQueryable<JobOffer> GetJobOffersGreedy()
-        {
-            // greedy load as EF Core doesn't support lazy-loading yet
-            return _context.JobOffers
-                .Include(u => u.JobCategory)
-                .Include(u => u.JobType)
-                .Include(u => u.Author);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            return await _userManager.GetUserAsync(User);
-        }
-
-        private async Task<bool> IsUserModerator()
-        {
-            var user = await GetCurrentUser();
-            return await _userManager.IsInRoleAsync(user, RoleHelper.Moderator);
-        }
-
-        private async Task<bool> IsUserAdministrator()
-        {
-            var user = await GetCurrentUser();
-            return await _userManager.IsInRoleAsync(user, RoleHelper.Administrator);
+            return View("NotFound");
         }
     }
 }

@@ -5,7 +5,6 @@
     <UserSecretsId>aspnet-BulletinBoard-32407321-596B-48D8-A5B3-59DD8097615C</UserSecretsId>
   </PropertyGroup>
 
-
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />

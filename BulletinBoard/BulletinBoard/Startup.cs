@@ -6,7 +6,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BulletinBoard.Data;
+using BulletinBoard.Data.Repositories;
+using BulletinBoard.Data.Repositories.Abstract;
+using BulletinBoard.Helpers.Filters;
 using BulletinBoard.Models;
+using BulletinBoard.Services;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Localization;
 
 namespace BulletinBoard
@@ -45,9 +50,25 @@ namespace BulletinBoard
             });
             
             services.AddScoped<ApplicationDbInitializer>();
+            services.AddTransient<IJobCategoryRepository, JobCategoryRepository>();
+            services.AddTransient<IJobTypeRepository, JobTypeRepository>();
+            services.AddTransient<IJobOfferRepository, JobOfferRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IJobCategoryService, JobCategoryService>();
+            services.AddTransient<IJobTypeService, JobTypeService>();
+            services.AddTransient<IJobOfferService, JobOfferService>();
+            services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IAuthService, AuthService>();
+
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddAutoMapper();
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ExampleActionFilter));
+            });
+            
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer dbInitializer)

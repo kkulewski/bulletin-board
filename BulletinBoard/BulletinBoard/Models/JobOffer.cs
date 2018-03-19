@@ -8,9 +8,15 @@ namespace BulletinBoard.Models
 
         public ApplicationUser Author { get; set; }
 
+        public string AuthorId { get; set; }
+
         public JobCategory JobCategory { get; set; }
 
+        public string JobCategoryId { get; set; }
+
         public JobType JobType { get; set; }
+
+        public string JobTypeId { get; set; }
 
         public DateTime Submitted { get; set; }
 

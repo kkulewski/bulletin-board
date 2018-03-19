@@ -1,12 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BulletinBoard.Data;
 using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BulletinBoard.Controllers
@@ -14,21 +13,19 @@ namespace BulletinBoard.Controllers
     [Authorize(Roles = RoleHelper.Administrator)]
     public class JobCategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IJobCategoryService _jobCategoryService;
 
-        public JobCategoryController(ApplicationDbContext context, IMapper mapper)
+        public JobCategoryController(IJobCategoryService jobCategoryService)
         {
-            _context = context;
-            _mapper = mapper;
+            _jobCategoryService = jobCategoryService;
         }
 
         // GET: JobCategory
         public async Task<IActionResult> Index()
         {
-            var jobCategories = await _context.JobCategories
-                .Select(m => _mapper.Map<JobCategoryViewModel>(m)).ToListAsync();
-            return View(jobCategories);
+            var jobCategories = await _jobCategoryService.GetAllCategories();
+            var vm = Mapper.Map<IEnumerable<JobCategoryViewModel>>(jobCategories);
+            return View(vm);
         }
 
         // GET: JobCategory/Details/5
@@ -39,15 +36,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobCategory = await _context.JobCategories
-                .SingleOrDefaultAsync(m => m.JobCategoryId == id);
-            if (jobCategory == null)
+            var category = await _jobCategoryService.GetCategoryById(id);
+            if (category == null)
             {
                 return View("NotFound");
             }
             
-            var viewModel = _mapper.Map<DetailsJobCategoryViewModel>(jobCategory);
-            return View(viewModel);
+            var vm = Mapper.Map<DetailsJobCategoryViewModel>(category);
+            return View(vm);
         }
 
         // GET: JobCategory/Create
@@ -66,10 +62,13 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobCategory = new JobCategory {Name = model.Name};
-            _context.Add(jobCategory);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var result = await _jobCategoryService.Add(Mapper.Map<JobCategory>(model));
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View("NotFound");
         }
 
         // GET: JobCategory/Edit/5
@@ -80,15 +79,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobCategory = await _context.JobCategories
-                .SingleOrDefaultAsync(m => m.JobCategoryId == id);
-            if (jobCategory == null)
+            var category = await _jobCategoryService.GetCategoryById(id);
+            if (category == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<EditJobCategoryViewModel>(jobCategory);
-            return View(viewModel);
+            var vm = Mapper.Map<EditJobCategoryViewModel>(category);
+            return View(vm);
         }
 
         // POST: JobCategory/Edit/5
@@ -101,25 +99,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            try
+            var category = Mapper.Map<JobCategory>(model);
+            var result = await _jobCategoryService.Edit(category);
+            if (result)
             {
-                var jobCategory = await _context.JobCategories
-                    .SingleOrDefaultAsync(m => m.JobCategoryId == model.JobCategoryId);
-                jobCategory.Name = model.Name;
-                _context.Update(jobCategory);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await JobCategoryExists(model.JobCategoryId))
-                {
-                    return View("NotFound");
-                }
-
-                throw;
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return View("NotFound");
         }
 
         // GET: JobCategory/Delete/5
@@ -130,15 +117,14 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var jobCategory = await _context.JobCategories
-                .SingleOrDefaultAsync(m => m.JobCategoryId == id);
-            if (jobCategory == null)
+            var category = await _jobCategoryService.GetCategoryById(id);
+            if (category == null)
             {
                 return View("NotFound");
             }
 
-            var viewModel = _mapper.Map<DeleteJobCategoryViewModel>(jobCategory);
-            return View(viewModel);
+            var vm = Mapper.Map<DeleteJobCategoryViewModel>(category);
+            return View(vm);
         }
 
         // POST: JobType/Delete/5
@@ -151,16 +137,14 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobCategory = await _context.JobCategories
-                .SingleOrDefaultAsync(m => m.JobCategoryId == model.JobCategoryId);
-            _context.JobCategories.Remove(jobCategory);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            var category = Mapper.Map<JobCategory>(model);
+            var result = await _jobCategoryService.Delete(category);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-        private async Task<bool> JobCategoryExists(string id)
-        {
-            return await _context.JobCategories.AnyAsync(e => e.JobCategoryId == id);
+            return View("NotFound");
         }
     }
 }
