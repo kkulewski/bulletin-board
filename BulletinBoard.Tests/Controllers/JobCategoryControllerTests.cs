@@ -175,5 +175,23 @@ namespace BulletinBoard.Tests.Controllers
         }
 
         #endregion
+
+        #region Create
+
+        [Fact]
+        public void Create_Given_NoModel_Should_ReturnViewResultType()
+        {
+            // Arrange
+            var serviceMock = new Mock<IJobCategoryService>();
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = controller.Create();
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+        }
+
+        #endregion
     }
 }
