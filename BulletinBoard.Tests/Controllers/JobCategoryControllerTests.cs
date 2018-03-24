@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BulletinBoard.Controllers;
 using BulletinBoard.Models;
 using BulletinBoard.Models.JobCategoryViewModels;
@@ -14,7 +15,7 @@ namespace BulletinBoard.Tests.Controllers
     public class JobCategoryControllerTests
     {
         [Fact]
-        public async void Index_Given_MockedService_Should_ReturnCorrectNumberOfViewModels()
+        public async Task Index_Given_MockedService_Should_ReturnCorrectNumberOfViewModels()
         {
             // Arrange
             var items = new List<JobCategory>
@@ -35,11 +36,11 @@ namespace BulletinBoard.Tests.Controllers
             var controller = new JobCategoryController(serviceMock.Object, mapper);
 
             // Act
-            var result = await controller.Index() as ViewResult;
+            var result = (ViewResult) await controller.Index();
+            var model = (IList<JobCategoryViewModel>) result.Model;
 
             // Assert
-            var resultModel = result?.Model as IList<JobCategoryViewModel>;
-            Assert.Equal(3, resultModel?.Count);
+            Assert.Equal(3, model.Count);
         }
     }
 }
