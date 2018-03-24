@@ -25,6 +25,8 @@ namespace BulletinBoard.Tests.Controllers
             }).CreateMapper();
         }
 
+        #region Index
+
         [Fact]
         public async Task Index_Given_ThreeResultsFromService_Should_ReturnCorrectNumberOfViewModels()
         {
@@ -45,8 +47,8 @@ namespace BulletinBoard.Tests.Controllers
             var result = await controller.Index();
 
             // Assert
-            var viewResult = (ViewResult) result;
-            var model = (IList<JobCategoryViewModel>) viewResult.Model;
+            var viewResult = (ViewResult)result;
+            var model = (IList<JobCategoryViewModel>)viewResult.Model;
 
             Assert.Equal(3, model.Count);
         }
@@ -64,8 +66,8 @@ namespace BulletinBoard.Tests.Controllers
             var result = await controller.Index();
 
             // Assert
-            var viewResult = (ViewResult) result;
-            var model = (IList<JobCategoryViewModel>) viewResult.Model;
+            var viewResult = (ViewResult)result;
+            var model = (IList<JobCategoryViewModel>)viewResult.Model;
 
             Assert.Empty(model);
         }
@@ -93,11 +95,35 @@ namespace BulletinBoard.Tests.Controllers
             var result = await controller.Index();
 
             // Assert
-            var viewResult = (ViewResult) result;
-            var model = (IList<JobCategoryViewModel>) viewResult.Model;
+            var viewResult = (ViewResult)result;
+            var model = (IList<JobCategoryViewModel>)viewResult.Model;
             var actualName = model.First().Name;
 
             Assert.Equal(expectedName, actualName);
         }
+
+        #endregion
+
+        #region Details
+
+        [Fact]
+        public async Task Details_Given_NullId_Should_ReturnNotFoundView()
+        {
+            // Arrange
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.GetCategoryById(It.IsAny<string>())).ReturnsAsync((JobCategory) null);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Details(null);
+
+            // Assert
+            var viewResult = (ViewResult) result;
+
+            Assert.Equal("NotFound", viewResult.ViewName);
+        }
+
+        #endregion
     }
 }
