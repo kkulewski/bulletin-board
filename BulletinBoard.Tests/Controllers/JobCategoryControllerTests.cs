@@ -128,18 +128,50 @@ namespace BulletinBoard.Tests.Controllers
         public async Task Details_Given_IdThatDoesNotExist_Should_ReturnNotFoundView()
         {
             // Arrange
+            var item1 = new JobCategory { Name = "Item1" };
+            var item2 = new JobCategory { Name = "Item2" };
+            var item3 = new JobCategory { Name = "Item3" };
+
             var serviceMock = new Mock<IJobCategoryService>();
-            serviceMock.Setup(x => x.GetCategoryById(It.IsAny<string>())).ReturnsAsync((JobCategory)null);
+            serviceMock.Setup(x => x.GetCategoryById("1")).ReturnsAsync(item1);
+            serviceMock.Setup(x => x.GetCategoryById("2")).ReturnsAsync(item2);
+            serviceMock.Setup(x => x.GetCategoryById("3")).ReturnsAsync(item3);
 
             var controller = new JobCategoryController(serviceMock.Object, _mapper);
 
             // Act
-            var result = await controller.Details("1");
+            var result = await controller.Details("9");
 
             // Assert
-            var viewResult = (ViewResult)result;
+            var viewResult = (ViewResult) result;
 
             Assert.Equal("NotFound", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task Details_Given_ExistingItemId_Should_ReturnCorrectViewModel()
+        {
+            // Arrange
+            var item1 = new JobCategory { Name = "Item1" };
+            var item2 = new JobCategory { Name = "Item2" };
+            var item3 = new JobCategory { Name = "Item3" };
+            var expectedName = item2.Name;
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.GetCategoryById("1")).ReturnsAsync(item1);
+            serviceMock.Setup(x => x.GetCategoryById("2")).ReturnsAsync(item2);
+            serviceMock.Setup(x => x.GetCategoryById("3")).ReturnsAsync(item3);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Details("2");
+
+            // Assert
+            var viewResult = (ViewResult) result;
+            var model = (DetailsJobCategoryViewModel) viewResult.Model;
+
+            Assert.Equal(expectedName, model.Name);
         }
 
         #endregion
