@@ -69,5 +69,34 @@ namespace BulletinBoard.Tests.Controllers
 
             Assert.Empty(model);
         }
+
+        [Fact]
+        public async Task Index_Given_ResultFromService_Should_ReturnViewModelWithExpectedName()
+        {
+            // Arrange
+            const string categoryName = "Example";
+
+            var items = new List<JobCategory>
+            {
+                new JobCategory
+                {
+                    Name = categoryName
+                }
+            };
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.GetAllCategories()).ReturnsAsync(items);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Index();
+
+            // Assert
+            var viewResult = (ViewResult) result;
+            var model = (IList<JobCategoryViewModel>) viewResult.Model;
+
+            Assert.Equal(categoryName, model.First().Name);
+        }
     }
 }
