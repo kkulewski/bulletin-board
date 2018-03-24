@@ -233,6 +233,43 @@ namespace BulletinBoard.Tests.Controllers
             Assert.Equal("NotFound", viewResult.ViewName);
         }
 
+        [Fact]
+        public async Task Create_Given_ServiceAddSuccess_Should_ReturnRedirectToActionResult()
+        {
+            // Arrange
+            var vm = new CreateJobCategoryViewModel();
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.Add(It.IsAny<JobCategory>())).ReturnsAsync(true);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Create(vm);
+
+            // Assert
+            Assert.IsType<RedirectToActionResult>(result);
+        }
+
+        [Fact]
+        public async Task Create_Given_ServiceAddSuccess_Should_RedirectToIndex()
+        {
+            // Arrange
+            var vm = new CreateJobCategoryViewModel();
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.Add(It.IsAny<JobCategory>())).ReturnsAsync(true);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Create(vm);
+            var redirectResult = (RedirectToActionResult) result;
+
+            // Assert
+            Assert.Equal("Index", redirectResult.ActionName);
+        }
+
         #endregion
     }
 }
