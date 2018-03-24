@@ -192,6 +192,27 @@ namespace BulletinBoard.Tests.Controllers
             Assert.IsType<ViewResult>(result);
         }
 
+        [Fact]
+        public async Task Create_Given_ModelWithInvalidState_Should_ReturnSameModel()
+        {
+            // Arrange
+            const string expectedName = "ExampleName";
+            var vm = new CreateJobCategoryViewModel {Name = expectedName };
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+            controller.ModelState.AddModelError("Key", "Message");
+
+            // Act
+            var result = await controller.Create(vm);
+
+            // Assert
+            var viewResult = (ViewResult) result;
+            var model = (CreateJobCategoryViewModel) viewResult.Model;
+
+            Assert.Equal(expectedName, model.Name);
+        }
+
         #endregion
     }
 }
