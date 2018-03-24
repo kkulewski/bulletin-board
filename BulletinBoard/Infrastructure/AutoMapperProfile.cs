@@ -9,9 +9,9 @@ namespace BulletinBoard.Infrastructure
     /// <summary>
     /// Default model to view-model automapper mapping profile.
     /// </summary>
-    public class AutoMapperConfiguration : Profile
+    public class AutoMapperProfile : Profile
     {
-        public AutoMapperConfiguration()
+        public AutoMapperProfile()
         {
             #region JobCategory
 

@@ -19,18 +19,21 @@ namespace BulletinBoard.Controllers
         private readonly IJobCategoryService _jobCategoryService;
         private readonly IAuthService _authService;
         private readonly IJobTypeService _jobTypeService;
+        private readonly IMapper _mapper;
 
         public JobOfferController(
             IJobOfferService jobOfferService,
             IJobCategoryService jobCategoryService,
             IJobTypeService jobTypeService,
             IAuthService authService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IMapper mapper)
         {
             _jobOfferService = jobOfferService;
             _jobCategoryService = jobCategoryService;
             _jobTypeService = jobTypeService;
             _authService = authService;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -50,7 +53,7 @@ namespace BulletinBoard.Controllers
         public async Task<IActionResult> Index()
         {
             var jobOffers = await _jobOfferService.GetAllOffers();
-            var vms = Mapper.Map<IList<JobOfferViewModel>>(jobOffers);
+            var vms = _mapper.Map<IList<JobOfferViewModel>>(jobOffers);
             ViewData["JobOfferCount"] = vms.Count;
 
             if (!await _authService.IsSignedIn(HttpContext.User))
@@ -76,7 +79,7 @@ namespace BulletinBoard.Controllers
             }
 
             var matchingOffers = await _jobOfferService.GetOffersContainingPhrase(phrase);
-            var vms = Mapper.Map<IList<JobOfferViewModel>>(matchingOffers);
+            var vms = _mapper.Map<IList<JobOfferViewModel>>(matchingOffers);
             ViewData["JobOfferCount"] = vms.Count;
             ViewData["phrase"] = phrase;
 
@@ -98,7 +101,7 @@ namespace BulletinBoard.Controllers
         public async Task<IActionResult> Popular()
         {
             var popularJobOffers = await _jobOfferService.GetMostPopularOffers();
-            var vms = Mapper.Map<IEnumerable<PopularJobOfferViewModel>>(popularJobOffers);
+            var vms = _mapper.Map<IEnumerable<PopularJobOfferViewModel>>(popularJobOffers);
             return View(vms);
         }
 
@@ -119,7 +122,7 @@ namespace BulletinBoard.Controllers
 
             await _jobOfferService.IncreaseOfferViews(jobOffer);
 
-            var vm = Mapper.Map<DetailsJobOfferViewModel>(jobOffer);
+            var vm = _mapper.Map<DetailsJobOfferViewModel>(jobOffer);
             if (!await _authService.IsSignedIn(HttpContext.User))
             {
                 return View(vm);
@@ -156,7 +159,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobOffer = Mapper.Map<JobOffer>(model);
+            var jobOffer = _mapper.Map<JobOffer>(model);
             var result = await _jobOfferService.Add(jobOffer);
             if (result)
             {
@@ -185,7 +188,7 @@ namespace BulletinBoard.Controllers
                 return View("AccessDenied");
             }
 
-            var vm = Mapper.Map<EditJobOfferViewModel>(offer);
+            var vm = _mapper.Map<EditJobOfferViewModel>(offer);
             vm.JobCategories = await _jobCategoryService.GetAllCategories();
             vm.JobTypes = await _jobTypeService.GetAllTypes();
             return View(vm);
@@ -203,7 +206,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var offer = Mapper.Map<JobOffer>(model);
+            var offer = _mapper.Map<JobOffer>(model);
             var result = await _jobOfferService.Edit(offer);
             if (result)
             {
@@ -227,7 +230,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var viewModel = Mapper.Map<DeleteJobOfferViewModel>(jobOffer);
+            var viewModel = _mapper.Map<DeleteJobOfferViewModel>(jobOffer);
             return View(viewModel);
         }
 
@@ -241,7 +244,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
             
-            var offer = Mapper.Map<JobOffer>(model);
+            var offer = _mapper.Map<JobOffer>(model);
             var result = await _jobOfferService.Delete(offer);
             if (result)
             {
