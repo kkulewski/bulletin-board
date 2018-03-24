@@ -14,17 +14,19 @@ namespace BulletinBoard.Controllers
     public class JobCategoryController : Controller
     {
         private readonly IJobCategoryService _jobCategoryService;
+        private readonly IMapper _mapper;
 
-        public JobCategoryController(IJobCategoryService jobCategoryService)
+        public JobCategoryController(IJobCategoryService jobCategoryService, IMapper mapper)
         {
             _jobCategoryService = jobCategoryService;
+            _mapper = mapper;
         }
 
         // GET: JobCategory
         public async Task<IActionResult> Index()
         {
             var jobCategories = await _jobCategoryService.GetAllCategories();
-            var vm = Mapper.Map<IEnumerable<JobCategoryViewModel>>(jobCategories);
+            var vm = _mapper.Map<IEnumerable<JobCategoryViewModel>>(jobCategories);
             return View(vm);
         }
 
@@ -42,7 +44,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
             
-            var vm = Mapper.Map<DetailsJobCategoryViewModel>(category);
+            var vm = _mapper.Map<DetailsJobCategoryViewModel>(category);
             return View(vm);
         }
 
@@ -62,7 +64,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var result = await _jobCategoryService.Add(Mapper.Map<JobCategory>(model));
+            var result = await _jobCategoryService.Add(_mapper.Map<JobCategory>(model));
             if (result)
             {
                 return RedirectToAction(nameof(Index));
@@ -85,7 +87,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var vm = Mapper.Map<EditJobCategoryViewModel>(category);
+            var vm = _mapper.Map<EditJobCategoryViewModel>(category);
             return View(vm);
         }
 
@@ -99,7 +101,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var category = Mapper.Map<JobCategory>(model);
+            var category = _mapper.Map<JobCategory>(model);
             var result = await _jobCategoryService.Edit(category);
             if (result)
             {
@@ -123,7 +125,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var vm = Mapper.Map<DeleteJobCategoryViewModel>(category);
+            var vm = _mapper.Map<DeleteJobCategoryViewModel>(category);
             return View(vm);
         }
 
@@ -137,7 +139,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var category = Mapper.Map<JobCategory>(model);
+            var category = _mapper.Map<JobCategory>(model);
             var result = await _jobCategoryService.Delete(category);
             if (result)
             {

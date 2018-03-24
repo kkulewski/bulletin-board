@@ -14,17 +14,19 @@ namespace BulletinBoard.Controllers
     public class JobTypeController : Controller
     {
         private readonly IJobTypeService _jobTypeService;
+        private readonly IMapper _mapper;
 
-        public JobTypeController(IJobTypeService jobTypeService)
+        public JobTypeController(IJobTypeService jobTypeService, IMapper mapper)
         {
             _jobTypeService = jobTypeService;
+            _mapper = mapper;
         }
 
         // GET: JobType
         public async Task<IActionResult> Index()
         {
             var result = await _jobTypeService.GetAllTypes();
-            var vm = Mapper.Map<IEnumerable<JobTypeViewModel>>(result);
+            var vm = _mapper.Map<IEnumerable<JobTypeViewModel>>(result);
             return View(vm);
         }
 
@@ -42,7 +44,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var vm = Mapper.Map<DetailsJobTypeViewModel>(jobType);
+            var vm = _mapper.Map<DetailsJobTypeViewModel>(jobType);
             return View(vm);
         }
 
@@ -85,7 +87,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var vm = Mapper.Map<EditJobTypeViewModel>(jobType);
+            var vm = _mapper.Map<EditJobTypeViewModel>(jobType);
             return View(vm);
         }
 
@@ -99,7 +101,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var type = Mapper.Map<JobType>(model);
+            var type = _mapper.Map<JobType>(model);
             var result = await _jobTypeService.Edit(type);
             if (result)
             {
@@ -123,7 +125,7 @@ namespace BulletinBoard.Controllers
                 return View("NotFound");
             }
 
-            var vm = Mapper.Map<DeleteJobTypeViewModel>(jobType);
+            var vm = _mapper.Map<DeleteJobTypeViewModel>(jobType);
             return View(vm);
         }
 
@@ -137,7 +139,7 @@ namespace BulletinBoard.Controllers
                 return View(model);
             }
 
-            var jobType = Mapper.Map<JobType>(model);
+            var jobType = _mapper.Map<JobType>(model);
             var result = await _jobTypeService.Delete(jobType);
             if (result)
             {
