@@ -58,7 +58,7 @@ namespace BulletinBoard.Tests.ViewModels.JobCategoryViewModels
             var result = new List<ValidationResult>();
 
             // Act
-            var valid = Validator.TryValidateObject(model, context, result, true);
+            Validator.TryValidateObject(model, context, result, true);
 
             // Assert
             var errorMessage = string.Format("{0} must start with capital letter.", nameof(model.Name));
