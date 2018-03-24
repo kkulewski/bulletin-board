@@ -12,7 +12,6 @@ namespace BulletinBoard.Tests.Services
 {
     public class JobCategoryServiceTests
     {
-
         #region GetAllCategories
 
         [Fact]
@@ -23,7 +22,6 @@ namespace BulletinBoard.Tests.Services
             repoMock.Setup(x => x.GetAll()).ReturnsAsync(new List<JobCategory>());
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
-
             var service = new JobCategoryService(repoMock.Object, unitOfWorkMock.Object);
 
             // Act
@@ -48,7 +46,6 @@ namespace BulletinBoard.Tests.Services
             repoMock.Setup(x => x.GetAll()).ReturnsAsync(items);
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
-
             var service = new JobCategoryService(repoMock.Object, unitOfWorkMock.Object);
 
             // Act
@@ -59,7 +56,31 @@ namespace BulletinBoard.Tests.Services
             Assert.Equal(3, list.Count);
         }
 
-        #endregion
+        [Fact]
+        public async Task GetAllCategories_Given_RepositoryWithItem_Should_ReturnResultThatContainsIt()
+        {
+            // Arrange
+            const string expectedName = "Category2";
+            var items = new List<JobCategory>
+            {
+                new JobCategory {Name = "Category1"},
+                new JobCategory {Name = expectedName},
+                new JobCategory {Name = "Category3"}
+            };
 
+            var repoMock = new Mock<IJobCategoryRepository>();
+            repoMock.Setup(x => x.GetAll()).ReturnsAsync(items);
+
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var service = new JobCategoryService(repoMock.Object, unitOfWorkMock.Object);
+
+            // Act
+            var result = await service.GetAllCategories();
+
+            // Assert
+            Assert.Contains(result, x => x.Name == expectedName);
+        }
+
+        #endregion
     }
 }
