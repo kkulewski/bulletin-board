@@ -213,6 +213,26 @@ namespace BulletinBoard.Tests.Controllers
             Assert.Equal(expectedName, model.Name);
         }
 
+        [Fact]
+        public async Task Create_Given_ServiceAddFailure_Should_ReturnNotFoundView()
+        {
+            // Arrange
+            var vm = new CreateJobCategoryViewModel();
+
+            var serviceMock = new Mock<IJobCategoryService>();
+            serviceMock.Setup(x => x.Add(It.IsAny<JobCategory>())).ReturnsAsync(false);
+
+            var controller = new JobCategoryController(serviceMock.Object, _mapper);
+
+            // Act
+            var result = await controller.Create(vm);
+
+            // Assert
+            var viewResult = (ViewResult) result;
+
+            Assert.Equal("NotFound", viewResult.ViewName);
+        }
+
         #endregion
     }
 }
