@@ -74,13 +74,13 @@ namespace BulletinBoard.Tests.Controllers
         public async Task Index_Given_ResultFromService_Should_ReturnViewModelWithExpectedName()
         {
             // Arrange
-            const string categoryName = "Example";
+            const string expectedName = "Example";
 
             var items = new List<JobCategory>
             {
                 new JobCategory
                 {
-                    Name = categoryName
+                    Name = expectedName
                 }
             };
 
@@ -95,8 +95,9 @@ namespace BulletinBoard.Tests.Controllers
             // Assert
             var viewResult = (ViewResult) result;
             var model = (IList<JobCategoryViewModel>) viewResult.Model;
+            var actualName = model.First().Name;
 
-            Assert.Equal(categoryName, model.First().Name);
+            Assert.Equal(expectedName, actualName);
         }
     }
 }
