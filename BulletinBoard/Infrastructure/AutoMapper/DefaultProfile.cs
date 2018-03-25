@@ -4,14 +4,14 @@ using BulletinBoard.Models.JobCategoryViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
 using BulletinBoard.Models.JobTypeViewModels;
 
-namespace BulletinBoard.Infrastructure
+namespace BulletinBoard.Infrastructure.AutoMapper
 {
     /// <summary>
     /// Default model to view-model automapper mapping profile.
     /// </summary>
-    public class AutoMapperProfile : Profile
+    public class DefaultProfile : Profile
     {
-        public AutoMapperProfile()
+        public DefaultProfile()
         {
             #region JobCategory
 

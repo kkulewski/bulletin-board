@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 using AutoMapper;
-using BulletinBoard.Infrastructure;
+using BulletinBoard.Infrastructure.AutoMapper;
 
 namespace BulletinBoard.Tests.Controllers
 {
@@ -21,7 +21,7 @@ namespace BulletinBoard.Tests.Controllers
         {
             _mapper = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<AutoMapperProfile>();
+                cfg.AddProfile<DefaultProfile>();
             }).CreateMapper();
         }
 
