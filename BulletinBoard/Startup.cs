@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +28,9 @@ namespace BulletinBoard
 
         public IConfiguration Configuration { get; }
         
-        public void ConfigureServices(IServiceCollection services)
+        public IContainer ApplicationContainer { get; private set; }
+
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -49,26 +54,50 @@ namespace BulletinBoard
                 options.DefaultRequestCulture = new RequestCulture("en-US");
             });
             
-            services.AddScoped<ApplicationDbInitializer>();
-            services.AddTransient<IJobCategoryRepository, JobCategoryRepository>();
-            services.AddTransient<IJobTypeRepository, JobTypeRepository>();
-            services.AddTransient<IJobOfferRepository, JobOfferRepository>();
-            services.AddTransient<IRoleRepository, RoleRepository>();
-            services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IJobCategoryService, JobCategoryService>();
-            services.AddTransient<IJobTypeService, JobTypeService>();
-            services.AddTransient<IJobOfferService, JobOfferService>();
-            services.AddTransient<IRoleService, RoleService>();
-            services.AddTransient<IAuthService, AuthService>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
+
             services.AddAutoMapper();
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(ExampleActionFilter));
-            });
-            
+            services.AddAutofac();
+
+            services.AddScoped<ApplicationDbInitializer>();
+
+            services
+                .AddMvc(options => { options.Filters.Add(typeof(ExampleActionFilter)); })
+                .AddControllersAsServices();
+
+            // Create the container builder.
+            var builder = new ContainerBuilder();
+
+            // Register dependencies, populate the services from
+            // the collection, and build the container. If you want
+            // to dispose of the container at the end of the app,
+            // be sure to keep a reference to it as a property or field.
+            //
+            // Note that Populate is basically a foreach to add things
+            // into Autofac that are in the collection. If you register
+            // things in Autofac BEFORE Populate then the stuff in the
+            // ServiceCollection can override those things; if you register
+            // AFTER Populate those registrations can override things
+            // in the ServiceCollection. Mix and match as needed.
+            builder.RegisterType<Mapper>().As<IMapper>();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
+            builder.RegisterType<ApplicationUserRepository>().As<IApplicationUserRepository>();
+            builder.RegisterType<JobCategoryService>().As<IJobCategoryService>();
+            builder.RegisterType<JobTypeRepository>().As<IJobTypeRepository>();
+            builder.RegisterType<JobTypeService>().As<IJobTypeService>();
+            builder.RegisterType<JobCategoryRepository>().As<IJobCategoryRepository>();
+            builder.RegisterType<JobCategoryService>().As<IJobCategoryService>();
+            builder.RegisterType<JobOfferRepository>().As<IJobOfferRepository>();
+            builder.RegisterType<JobOfferService>().As<IJobOfferService>();
+            builder.RegisterType<RoleService>().As<IRoleService>();
+            builder.RegisterType<AuthService>().As<IAuthService>();
+
+            builder.Populate(services);
+            this.ApplicationContainer = builder.Build();
+
+            // Create the IServiceProvider based on the container.
+            return new AutofacServiceProvider(this.ApplicationContainer);
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer dbInitializer)
