@@ -6,7 +6,7 @@ using BulletinBoard.Services.Abstract;
 
 namespace BulletinBoard.Services
 {
-    public class SeedService
+    public class SeedService : ISeedService
     {
         private readonly IAuthService _authService;
         private readonly IRoleService _roleService;
