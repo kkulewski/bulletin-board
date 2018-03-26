@@ -12,6 +12,7 @@ using BulletinBoard.Data;
 using BulletinBoard.Helpers.Filters;
 using BulletinBoard.Infrastructure.Autofac;
 using BulletinBoard.Models;
+using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Localization;
 
 namespace BulletinBoard
@@ -65,7 +66,7 @@ namespace BulletinBoard
             return new AutofacServiceProvider(builder.Build());
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer databaseInitializer)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISeedService seedService)
         {
             if (env.IsDevelopment())
             {
@@ -82,9 +83,8 @@ namespace BulletinBoard
             app.UseStatusCodePagesWithReExecute("/JobOffer/Error", "?statusCode={0}");
             app.UseRequestLocalization();
             app.UseAuthentication();
-            
-            databaseInitializer.ApplyMigrations();
-            databaseInitializer.Seed();
+
+            seedService.Seed();
             
             app.UseMvc(routes =>
             {
