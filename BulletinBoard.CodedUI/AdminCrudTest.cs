@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UITesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-
 namespace BulletinBoard.CodedUI
 {
     /// <summary>
@@ -24,20 +23,20 @@ namespace BulletinBoard.CodedUI
         {
             // To generate code for this test, select "Generate Code for Coded UI Test"
             // from the shortcut menu and select one of the menu items.
-            this.UiMap.Admin_LogsIn();
-            this.UiMap.Admin_AddsFirstJobType();
-            this.UiMap.Admin_AddsSecondJobType();
-            this.UiMap.Admin_AddsFirstJobCategory();
-            this.UiMap.Admin_ChecksFirstJobCategoryDetails();
-            this.UiMap.Admin_AddsSecondJobCategory();
-            this.UiMap.Admin_AddsFirstJobOffer();
-            this.UiMap.Admin_UpdatesFirstJobOffer();
-            this.UiMap.Admin_LogsOut_AndChecksAddedJobOffer();
-            this.UiMap.Admin_LogsInAgain();
-            this.UiMap.Admin_DeletesJobOffer();
-            this.UiMap.Admin_DeletesJobTypes();
-            this.UiMap.Admin_DeletesJobCategories();
-            this.UiMap.Admin_NavigatesToHome_AndLogsOut();
+            UiMap.Admin_LogsIn();
+            UiMap.Admin_AddsFirstJobType();
+            UiMap.Admin_AddsSecondJobType();
+            UiMap.Admin_AddsFirstJobCategory();
+            UiMap.Admin_ChecksFirstJobCategoryDetails();
+            UiMap.Admin_AddsSecondJobCategory();
+            UiMap.Admin_AddsFirstJobOffer();
+            UiMap.Admin_UpdatesFirstJobOffer();
+            UiMap.Admin_LogsOut_AndChecksAddedJobOffer();
+            UiMap.Admin_LogsInAgain();
+            UiMap.Admin_DeletesJobOffer();
+            UiMap.Admin_DeletesJobTypes();
+            UiMap.Admin_DeletesJobCategories();
+            UiMap.Admin_NavigatesToHome_AndLogsOut();
         }
 
         /// <summary>
