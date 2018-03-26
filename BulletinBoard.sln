@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulletinBoard", "BulletinBoard\BulletinBoard.csproj", "{C9552ED4-2270-4BF3-8644-CE42DBA4E65E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulletinBoard.Tests", "BulletinBoard.Tests\BulletinBoard.Tests.csproj", "{86F96F9E-8D88-468D-86E7-0655A24ABA28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulletinBoard.Tests", "BulletinBoard.Tests\BulletinBoard.Tests.csproj", "{86F96F9E-8D88-468D-86E7-0655A24ABA28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
