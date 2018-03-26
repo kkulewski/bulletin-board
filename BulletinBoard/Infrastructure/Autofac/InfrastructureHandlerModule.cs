@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using AutoMapper;
-using BulletinBoard.Services;
-using BulletinBoard.Services.Abstract;
 
 namespace BulletinBoard.Infrastructure.Autofac
 {
@@ -10,7 +8,6 @@ namespace BulletinBoard.Infrastructure.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<Mapper>().As<IMapper>();
-            builder.RegisterType<SeedService>().As<ISeedService>();
         }
     }
 }

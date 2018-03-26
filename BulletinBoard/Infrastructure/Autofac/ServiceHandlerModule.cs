@@ -8,6 +8,8 @@ namespace BulletinBoard.Infrastructure.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<SeedService>().As<ISeedService>();
+
             builder.RegisterType<ApplicationUserService>().As<IApplicationUserService>();
             builder.RegisterType<RoleService>().As<IRoleService>();
             builder.RegisterType<AuthService>().As<IAuthService>();
