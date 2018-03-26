@@ -65,7 +65,7 @@ namespace BulletinBoard
             return new AutofacServiceProvider(builder.Build());
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbInitializer databaseInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -83,7 +83,8 @@ namespace BulletinBoard
             app.UseRequestLocalization();
             app.UseAuthentication();
             
-            dbInitializer.Seed();
+            databaseInitializer.ApplyMigrations();
+            databaseInitializer.Seed();
             
             app.UseMvc(routes =>
             {

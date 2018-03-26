@@ -17,10 +17,13 @@ namespace BulletinBoard.Data
             _userManager = userManager;
         }
 
-        public void Seed()
+        public void ApplyMigrations()
         {
             _context.Database.Migrate();
-            
+        }
+
+        public void Seed()
+        {
             if (!_context.Roles.Any())
             {
                 var roleNames = new[]
