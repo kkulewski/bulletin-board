@@ -9,5 +9,7 @@ namespace BulletinBoard.Data.Repositories.Abstract
         Task<IEnumerable<IdentityRole>> GetAll();
 
         Task<IdentityRole> GetById(string id);
+
+        void Add(IdentityRole role);
     }
 }
