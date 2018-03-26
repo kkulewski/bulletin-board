@@ -48,10 +48,7 @@ namespace BulletinBoard
                 options.DefaultRequestCulture = new RequestCulture("en-US");
             });
 
-
             services.AddRouting(options => options.LowercaseUrls = true);
-
-            services.AddScoped<ApplicationDbInitializer>();
             
             services.AddAutoMapper();
 
