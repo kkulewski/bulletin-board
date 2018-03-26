@@ -1223,7 +1223,7 @@ namespace BulletinBoard.CodedUI
                 {
                     this.mUILoginButton = new HtmlButton(this);
                     #region Search Criteria
-                    this.mUILoginButton.SearchProperties[HtmlButton.PropertyNames.Id] = null;
+                    this.mUILoginButton.SearchProperties[HtmlButton.PropertyNames.Id] = "LoginButton";
                     this.mUILoginButton.SearchProperties[HtmlButton.PropertyNames.Name] = null;
                     this.mUILoginButton.SearchProperties[HtmlButton.PropertyNames.DisplayText] = "Log in";
                     this.mUILoginButton.SearchProperties[HtmlButton.PropertyNames.Type] = "submit";
