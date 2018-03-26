@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AutoMapper;
+using BulletinBoard.Data;
 
 namespace BulletinBoard.Infrastructure.Autofac
 {
@@ -8,6 +9,7 @@ namespace BulletinBoard.Infrastructure.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<Mapper>().As<IMapper>();
+            builder.RegisterType<ApplicationDbInitializer>();
         }
     }
 }

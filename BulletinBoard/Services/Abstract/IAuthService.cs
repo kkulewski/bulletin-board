@@ -24,5 +24,7 @@ namespace BulletinBoard.Services.Abstract
         Task<bool> AddRoleToUser(ApplicationUser user, string roleName);
 
         Task<bool> RemoveRolesFromUser(ApplicationUser user, IList<string> roleNames);
+
+        Task<string> GetUserName(ClaimsPrincipal claimsUser);
     }
 }

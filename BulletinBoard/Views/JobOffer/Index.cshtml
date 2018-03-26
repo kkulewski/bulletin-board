@@ -1,5 +1,6 @@
-﻿@model IEnumerable<BulletinBoard.Models.JobOfferViewModels.JobOfferViewModel>
-@inject SignInManager<ApplicationUser> SignInManager
+﻿@using BulletinBoard.Services.Abstract
+@model IEnumerable<BulletinBoard.Models.JobOfferViewModels.JobOfferViewModel>
+@inject IAuthService AuthService
 
 @{
     ViewData["Title"] = "Job offers";
@@ -11,7 +12,7 @@
 
 </p>
 <form asp-action="Search" method="get" class="form-inline">
-    @if (SignInManager.IsSignedIn(User))
+    @if (await AuthService.IsSignedIn(User))
     {
         <a asp-action="Create" class="btn btn-success btn-sm">Create</a>
     }
