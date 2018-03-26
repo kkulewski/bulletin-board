@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using BulletinBoard.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BulletinBoard.Models.AccountViewModels;

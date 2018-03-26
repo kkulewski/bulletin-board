@@ -24,5 +24,10 @@ namespace BulletinBoard.Data.Repositories
         {
             return await _context.Roles.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public void Add(IdentityRole role)
+        {
+            _context.Roles.Add(role);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BulletinBoard.Data;
 using BulletinBoard.Data.Repositories.Abstract;
 using BulletinBoard.Helpers;
+using BulletinBoard.Models;
 using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,6 +32,11 @@ namespace BulletinBoard.Services
         public async Task<IEnumerable<IdentityRole>> GetAllRoles()
         {
             return await _roleRepo.GetAll();
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
+        {
+            return await _userRepo.GetAll();
         }
 
         public async Task<IdentityRole> GetUserRole(string userId)
@@ -61,6 +67,13 @@ namespace BulletinBoard.Services
         {
             var userRole = await GetUserRole(userId);
             return string.Equals(userRole.NormalizedName, RoleHelper.Normalize(RoleHelper.Administrator));
+        }
+
+        public async Task AddRole(string roleName)
+        {
+            var role = new IdentityRole(roleName) { NormalizedName = RoleHelper.Normalize(roleName) };
+            _roleRepo.Add(role);
+            await _unitOfWork.Save();
         }
     }
 }
