@@ -6,11 +6,11 @@ using BulletinBoard.Services.Abstract;
 
 namespace BulletinBoard.Services
 {
-    public class ApplicationApplicationUserService : IApplicationUserService
+    public class ApplicationUserService : IApplicationUserService
     {
         private readonly IApplicationUserRepository _userRepository;
 
-        public ApplicationApplicationUserService(IApplicationUserRepository userRepository)
+        public ApplicationUserService(IApplicationUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
