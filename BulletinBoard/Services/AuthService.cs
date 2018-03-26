@@ -29,7 +29,7 @@ namespace BulletinBoard.Services
                 return false;
             }
 
-            var roleAssigned = await AddRoleToUser(createdUser, RoleHelper.User);
+            var roleAssigned = await AddRoleToUser(createdUser, roleName);
             if (!roleAssigned)
             {
                 return false;
