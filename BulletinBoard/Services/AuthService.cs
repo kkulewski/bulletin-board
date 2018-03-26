@@ -80,5 +80,10 @@ namespace BulletinBoard.Services
             var result = await _userManager.RemoveFromRolesAsync(user, roleNames);
             return result.Succeeded;
         }
+
+        public async Task<string> GetUserName(ClaimsPrincipal claimsUser)
+        {
+            return await Task.Run(() => _userManager.GetUserName(claimsUser));
+        }
     }
 }

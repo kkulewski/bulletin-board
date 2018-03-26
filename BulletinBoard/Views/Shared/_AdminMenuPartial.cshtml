@@ -1,7 +1,8 @@
 @using BulletinBoard.Helpers
+@using BulletinBoard.Services.Abstract
 
-@inject SignInManager<ApplicationUser> SignInManager
-@if (SignInManager.IsSignedIn(User) && User.IsInRole(RoleHelper.Administrator))
+@inject IAuthService AuthService
+@if (await AuthService.IsSignedIn(User) && await AuthService.IsInRole(await AuthService.GetSignedUser(User), RoleHelper.Administrator))
 {
     <ul class="nav navbar-nav">
         <li><a asp-area="" asp-controller="Role" asp-action="Index">User roles</a></li>
