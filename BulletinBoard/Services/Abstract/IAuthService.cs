@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BulletinBoard.Helpers;
 using BulletinBoard.Models;
 
 namespace BulletinBoard.Services.Abstract
 {
     public interface IAuthService
     {
-        Task<bool> Register(string userName, string password);
+        Task<bool> Register(string userName, string password, bool signIn = true, string roleName = RoleHelper.User);
 
         Task<bool> Logout();
 

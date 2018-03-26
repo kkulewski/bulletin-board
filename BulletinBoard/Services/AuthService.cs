@@ -21,18 +21,26 @@ namespace BulletinBoard.Services
             _signInManager = signInManager;
         }
 
-        public async Task<bool> Register(string userName, string password)
+        public async Task<bool> Register(string userName, string password, bool signIn = true, string roleName = RoleHelper.User)
         {
-            var user = new ApplicationUser { UserName = userName, Email = userName };
-            var result = await _userManager.CreateAsync(user, password);
-            if (result.Succeeded)
+            var createdUser = await CreateUser(userName, password);
+            if (createdUser == null)
             {
-                await _userManager.AddToRoleAsync(user, RoleHelper.User);
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return true;
+                return false;
             }
 
-            return false;
+            var roleAssigned = await AddRoleToUser(createdUser, RoleHelper.User);
+            if (!roleAssigned)
+            {
+                return false;
+            }
+
+            if (signIn)
+            {
+                await _signInManager.SignInAsync(createdUser, isPersistent: false);
+            }
+
+            return true;
         }
 
         public async Task<bool> Logout()
@@ -84,6 +92,19 @@ namespace BulletinBoard.Services
         public async Task<string> GetUserName(ClaimsPrincipal claimsUser)
         {
             return await Task.Run(() => _userManager.GetUserName(claimsUser));
+        }
+
+        private async Task<ApplicationUser> CreateUser(string userName, string password)
+        {
+            var user = new ApplicationUser { UserName = userName, Email = userName };
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (!result.Succeeded)
+            {
+                user = null;
+            }
+
+            return user;
         }
     }
 }
