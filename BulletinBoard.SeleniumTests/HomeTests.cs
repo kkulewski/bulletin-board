@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
 
@@ -13,18 +14,26 @@ namespace BulletinBoard.SeleniumTests
             // Arrange
             var driver = new InternetExplorerDriver();
             var url = "http://localhost:5000/";
-            var nav = driver.Navigate();
 
             // Act
-            nav.GoToUrl(url);
-            var tableTitle = driver.FindElement(By.Id("popularOffersTitle")).Text;
+            try
+            {
+                var nav = driver.Navigate();
+                nav.GoToUrl(url);
+                var tableTitle = driver.FindElement(By.Id("popularOffersTitle")).Text;
 
-            // Assert
-            Assert.AreEqual("Popular job offers:", tableTitle);
-
-            // Cleanup
-            driver.Close();
-            driver.Dispose();
+                // Assert
+                Assert.AreEqual("Popular job offers:", tableTitle);
+            }
+            catch(Exception e)
+            {
+                // Assert
+                Assert.Fail(e.Message);
+            }
+            finally
+            {
+                driver.Quit();
+            }
         }
 
         [TestMethod]
@@ -32,29 +41,38 @@ namespace BulletinBoard.SeleniumTests
         {
             // Arrange
             var driver = new InternetExplorerDriver();
-            var nav = driver.Navigate();
             var url = "http://localhost:5000/account/login";
-            nav.GoToUrl(url);
 
             // Act
-            var emailField = driver.FindElement(By.Id("Email"));
-            emailField.Click();
-            emailField.SendKeys("admin@admin.com");
+            try
+            {
+                var nav = driver.Navigate();
+                nav.GoToUrl(url);
+                var emailField = driver.FindElement(By.Id("Email"));
+                emailField.Click();
+                emailField.SendKeys("admin@admin.com");
 
-            var passwordField = driver.FindElement(By.Id("Password"));
-            passwordField.Click();
-            passwordField.SendKeys("admin");
+                var passwordField = driver.FindElement(By.Id("Password"));
+                passwordField.Click();
+                passwordField.SendKeys("admin");
 
-            var submitButton = driver.FindElement(By.Id("LoginButton"));
-            submitButton.Click();
+                var submitButton = driver.FindElement(By.Id("LoginButton"));
+                submitButton.Click();
 
-            // Assert
-            var userGreet = driver.FindElement(By.Id("UserName")).Text;
-            StringAssert.Contains(userGreet, "admin@admin.com");
+                var userGreet = driver.FindElement(By.Id("UserName")).Text;
 
-            // Cleanup
-            driver.Close();
-            driver.Dispose();
+                // Assert
+                StringAssert.Contains(userGreet, "admin@admin.com");
+            }
+            catch(Exception e)
+            {
+                // Assert
+                Assert.Fail(e.Message);
+            }
+            finally
+            {
+                driver.Quit();
+            }
         }
 
         [TestMethod]
@@ -62,33 +80,44 @@ namespace BulletinBoard.SeleniumTests
         {
             // Arrange
             var driver = new InternetExplorerDriver();
-            var nav = driver.Navigate();
             var url = "http://localhost:5000/account/register";
-            nav.GoToUrl(url);
 
-            // Act
-            var emailField = driver.FindElement(By.Id("Email"));
-            emailField.Click();
-            emailField.SendKeys("wrong email");
+            try
+            {
+                var nav = driver.Navigate();
+                nav.GoToUrl(url);
 
-            var passwordField = driver.FindElement(By.Id("Password"));
-            passwordField.Click();
-            passwordField.SendKeys("password");
+                // Act
+                var emailField = driver.FindElement(By.Id("Email"));
+                emailField.Click();
+                emailField.SendKeys("wrong email");
 
-            var confirmField = driver.FindElement(By.Id("ConfirmPassword"));
-            confirmField.Click();
-            confirmField.SendKeys("password");
+                var passwordField = driver.FindElement(By.Id("Password"));
+                passwordField.Click();
+                passwordField.SendKeys("password");
 
-            var submitButton = driver.FindElement(By.Id("LoginButton"));
-            submitButton.Click();
+                var confirmField = driver.FindElement(By.Id("ConfirmPassword"));
+                confirmField.Click();
+                confirmField.SendKeys("password");
 
-            // Assert
-            var emailError = driver.FindElement(By.Id("Email-error")).Text;
-            StringAssert.Contains(emailError, "not a valid e-mail address");
+                var submitButton = driver.FindElement(By.Id("RegisterButton"));
+                submitButton.Click();
 
-            // Cleanup
-            driver.Close();
-            driver.Dispose();
+                var emailError = driver.FindElement(By.Id("Email-error")).Text;
+
+                // Assert
+                StringAssert.Contains(emailError, "not a valid e-mail address");
+            }
+            catch(Exception e)
+            {
+                // ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile("path", ScreenshotImageFormat.Png);
+                // Assert
+                Assert.Fail(e.Message);
+            }
+            finally
+            {
+                driver.Quit();
+            }
         }
     }
 }
