@@ -9,6 +9,7 @@ namespace BulletinBoard.Infrastructure.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MigrationManager>().As<IMigrationManager>();
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
 
             builder.RegisterType<ApplicationUserRepository>().As<IApplicationUserRepository>();
