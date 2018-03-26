@@ -66,7 +66,7 @@ namespace BulletinBoard
             return new AutofacServiceProvider(builder.Build());
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISeedService seedService)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMigrationManager migrationManager, ISeedService seedService)
         {
             if (env.IsDevelopment())
             {
@@ -84,7 +84,8 @@ namespace BulletinBoard
             app.UseRequestLocalization();
             app.UseAuthentication();
 
-            seedService.Seed();
+            migrationManager.Apply().Wait();
+            seedService.Seed().Wait();
             
             app.UseMvc(routes =>
             {
