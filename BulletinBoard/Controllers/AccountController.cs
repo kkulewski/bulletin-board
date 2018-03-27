@@ -46,6 +46,7 @@ namespace BulletinBoard.Controllers
                 return RedirectToLocal(returnUrl);
             }
 
+            ModelState.AddModelError(string.Empty, "Invalid email address or password.");
             return View(model);
         }
 
@@ -65,6 +66,7 @@ namespace BulletinBoard.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid)
             {
+                ModelState.AddModelError(string.Empty, "Invalid register attempt.");
                 return View(model);
             }
 
@@ -74,6 +76,7 @@ namespace BulletinBoard.Controllers
                 return RedirectToLocal(returnUrl);
             }
 
+            ModelState.TryAddModelError(string.Empty, "This email address is already taken.");
             return View(model);
         }
 

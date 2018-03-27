@@ -40,6 +40,7 @@ namespace BulletinBoard.Services
                 await _signInManager.SignInAsync(createdUser, isPersistent: false);
             }
 
+            // TODO: return status codes for further error handling
             return true;
         }
 
