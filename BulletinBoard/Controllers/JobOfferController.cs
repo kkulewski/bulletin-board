@@ -8,7 +8,6 @@ using BulletinBoard.Models.ErrorViewModels;
 using BulletinBoard.Models.JobOfferViewModels;
 using BulletinBoard.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace BulletinBoard.Controllers
 {
@@ -26,7 +25,6 @@ namespace BulletinBoard.Controllers
             IJobCategoryService jobCategoryService,
             IJobTypeService jobTypeService,
             IAuthService authService,
-            UserManager<ApplicationUser> userManager,
             IMapper mapper)
         {
             _jobOfferService = jobOfferService;
