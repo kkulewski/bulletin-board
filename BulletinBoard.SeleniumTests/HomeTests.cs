@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Support.UI;
 
 namespace BulletinBoard.SeleniumTests
 {
@@ -57,8 +58,10 @@ namespace BulletinBoard.SeleniumTests
                 passwordField.SendKeys("admin");
 
                 var submitButton = driver.FindElement(By.Id("LoginButton"));
-                submitButton.Click();
+                submitButton.SendKeys("\n");
 
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
+                wait.Until(UrlToBe("http://localhost:5000/"));
                 var userGreet = driver.FindElement(By.Id("UserName")).Text;
 
                 // Assert
@@ -118,6 +121,11 @@ namespace BulletinBoard.SeleniumTests
             {
                 driver.Quit();
             }
+        }
+
+        public static Func<IWebDriver, bool> UrlToBe(string url)
+        {
+            return (driver) => { return driver.Url.ToLowerInvariant().Equals(url.ToLowerInvariant()); };
         }
     }
 }
